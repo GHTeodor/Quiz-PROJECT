@@ -24,6 +24,7 @@ public class UserService : IUserService
     
     public User Post(User user)
     {
+        user.Role = Role.USER;
         _dbContext.Users.Add(user);
         _dbContext.SaveChangesAsync();
         return user;

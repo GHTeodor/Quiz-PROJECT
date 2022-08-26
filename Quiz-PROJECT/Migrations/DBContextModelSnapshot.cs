@@ -37,6 +37,10 @@ namespace Quiz_PROJECT.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(24)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Users");
