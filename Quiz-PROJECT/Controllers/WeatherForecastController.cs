@@ -29,4 +29,10 @@ public class WeatherForecastController : ControllerBase
             })
             .ToArray();
     }
+
+    [HttpGet("logger")]
+    public ILogger GetLog()
+    {
+        return _logger;
+    }
 }
