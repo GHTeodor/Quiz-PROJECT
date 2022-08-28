@@ -4,7 +4,7 @@
 
 namespace Quiz_PROJECT.Migrations
 {
-    public partial class QAU : Migration
+    public partial class User_QA_Migration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -29,6 +29,9 @@ namespace Quiz_PROJECT.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     NickName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Age = table.Column<int>(type: "int", nullable: true),
                     Role = table.Column<string>(type: "nvarchar(24)", nullable: false)
                 },
                 constraints: table =>

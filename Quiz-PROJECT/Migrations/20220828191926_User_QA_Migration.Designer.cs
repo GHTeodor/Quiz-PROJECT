@@ -12,8 +12,8 @@ using Quiz_PROJECT;
 namespace Quiz_PROJECT.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20220828180316_QAU")]
-    partial class QAU
+    [Migration("20220828191926_User_QA_Migration")]
+    partial class User_QA_Migration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -71,11 +71,22 @@ namespace Quiz_PROJECT.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<int?>("Age")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NickName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
