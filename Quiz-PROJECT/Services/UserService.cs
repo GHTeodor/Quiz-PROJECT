@@ -52,7 +52,6 @@ public class UserService : IUserService
         userForUpdate.Email = user.Email;
         userForUpdate.Phone = user.Phone;
         userForUpdate.Age = user.Age;
-        userForUpdate.Role = user.Role;
         userForUpdate.Password = user.Password;
         userForUpdate.ConfirmPassword = user.ConfirmPassword;
         
