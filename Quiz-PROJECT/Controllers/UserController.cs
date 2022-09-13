@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Quiz_PROJECT.Errors;
 using Quiz_PROJECT.Models;
 using Quiz_PROJECT.Services;
 
@@ -16,9 +17,9 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    public Task<IActionResult> Get()
+    public async Task<IActionResult> Get()
     {
-        return Task.FromResult<IActionResult>(Ok(_userService.Get()));
+        return await Task.FromResult<IActionResult>(Ok(_userService.Get()));
     }
     
     [HttpGet("{id:int:min(1)}")]
@@ -28,23 +29,23 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    public Task<IActionResult> Post([FromBody] User person)
+    public async Task<IActionResult> Post([FromBody] User person)
     {
-        User newUser = _userService.Post(person);
-        return Task.FromResult<IActionResult>(Accepted(newUser));
+        User newUser = await _userService.Post(person);
+        return await Task.FromResult<IActionResult>(Accepted(newUser));
     }
     
-    [HttpPatch("{id:int:min(1)}")]
-    public Task<IActionResult> Patch([FromBody] User person, int id)
+    [HttpPut("{id:int:min(1)}")]
+    public async Task<IActionResult> Put([FromBody] User person, int id)
     {
-        User updatedPerson = _userService.Put(person, id);
-        return Task.FromResult<IActionResult>(Ok(updatedPerson));
+        User updatedPerson = await _userService.Put(person, id);
+        return await Task.FromResult<IActionResult>(Ok(updatedPerson));
     }
     
     [HttpDelete("{id:int:min(1)}")]
-    public Task<IActionResult> DeleteById(int id)
+    public async Task<IActionResult> DeleteById(int id)
     {
         _userService.DeleteById(id);
-        return Task.FromResult<IActionResult>(Ok(id));
+        return await Task.FromResult<IActionResult>(Ok(id));
     }
 }
