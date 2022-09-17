@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using Quiz_PROJECT.Models;
 using Quiz_PROJECT.Services;
 
@@ -6,6 +7,7 @@ namespace Quiz_PROJECT.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[EnableCors]
 public class AnswerController : ControllerBase
 {
     private readonly IAnswerService _answerService;
