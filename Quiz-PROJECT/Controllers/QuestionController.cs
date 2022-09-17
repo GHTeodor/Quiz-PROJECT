@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Quiz_PROJECT.Models;
+using Quiz_PROJECT.Services;
 
 namespace Quiz_PROJECT.Controllers;
 
@@ -7,27 +8,24 @@ namespace Quiz_PROJECT.Controllers;
 [Route("[controller]")]
 public class QuestionController : ControllerBase
 {
-    private DBContext _dbContext;
+    private readonly IQuestionService _questionService;
 
-    public QuestionController(DBContext dbContext)
+    public QuestionController(IQuestionService questionService)
     {
-        _dbContext = dbContext;
+        _questionService = questionService;
     }
 
     [HttpGet]
-    public Task<IActionResult> Get()
+    public async Task<IActionResult> Get()
     {
-        return Task.FromResult<IActionResult>(Ok(_dbContext.Question));
+        return await Task.FromResult<IActionResult>(Ok(await _questionService.Get()));
     }
 
     [HttpPost]
-    public Task<IActionResult> Post([FromBody] Question questionX)
+    public async Task<IActionResult> Post([FromBody] Question question)
     {
-        Console.WriteLine(questionX);
+        var newQuestion = await _questionService.Post(question);
 
-        _dbContext.Question.Add(questionX);
-        _dbContext.SaveChangesAsync();
-
-        return Task.FromResult<IActionResult>(Accepted(questionX));
+        return await Task.FromResult<IActionResult>(Accepted(newQuestion));
     }
 }

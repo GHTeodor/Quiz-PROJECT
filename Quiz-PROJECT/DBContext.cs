@@ -19,7 +19,10 @@ public class DBContext : DbContext
 
         modelBuilder.Entity<Answers>()
              .HasOne(a => a.Question)
-             .WithMany(b => b.Answers);
+             .WithMany(b => b.Answers)
+             .OnDelete(DeleteBehavior.NoAction);
+             
+        base.OnModelCreating(modelBuilder);
     }
 
     public DbSet<User> Users { get; set; }

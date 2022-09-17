@@ -37,12 +37,11 @@ public class ExceptionHandler
         var response = context.Response;
         var customException = exception as BaseException;
         var statusCode = (int)HttpStatusCode.InternalServerError;
-        var message = "Unexpected error";
+        var message = exception.Message;
         var description = "Unexpected error";
 
         if (customException != null)
         {
-            message = customException.Message;
             description = customException.Description;
             statusCode = customException.Code;
         }

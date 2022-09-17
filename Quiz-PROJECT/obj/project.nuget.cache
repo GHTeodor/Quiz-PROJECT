@@ -1,11 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "AvmstQxkyZpfU94bRr9V2XxjlJpbxVngscHB/Fr/309dsoqM5iNFy5rsskkCTSXFQz3oXsTqTi0sk+ZOzBBArA==",
+  "dgSpecHash": "Vzz+5ju6CV6VIsMM5x3hn5GtENERpFVyMgL4POKPvZ/RCnuOsOfo83QIZ2pHhmrqipDvzCFNUEWmbhfsmEhYFw==",
   "success": true,
   "projectFilePath": "D:\\Exoft\\Quiz-PROJECT\\Quiz-PROJECT\\Quiz-PROJECT.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Teodo\\.nuget\\packages\\automapper\\11.0.0\\automapper.11.0.0.nupkg.sha512",
+    "C:\\Users\\Teodo\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\11.0.0\\automapper.extensions.microsoft.dependencyinjection.11.0.0.nupkg.sha512",
     "C:\\Users\\Teodo\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
-    "C:\\Users\\Teodo\\.nuget\\packages\\microsoft.csharp\\4.5.0\\microsoft.csharp.4.5.0.nupkg.sha512",
+    "C:\\Users\\Teodo\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
     "C:\\Users\\Teodo\\.nuget\\packages\\microsoft.data.sqlclient\\2.1.4\\microsoft.data.sqlclient.2.1.4.nupkg.sha512",
     "C:\\Users\\Teodo\\.nuget\\packages\\microsoft.data.sqlclient.sni.runtime\\2.1.1\\microsoft.data.sqlclient.sni.runtime.2.1.1.nupkg.sha512",
     "C:\\Users\\Teodo\\.nuget\\packages\\microsoft.entityframeworkcore\\6.0.9\\microsoft.entityframeworkcore.6.0.9.nupkg.sha512",
