@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Quiz_PROJECT.Errors;
 using Quiz_PROJECT.Models;
+using Quiz_PROJECT.Models.DTOModels;
 using Quiz_PROJECT.Services;
 
 namespace Quiz_PROJECT.Controllers;
@@ -9,7 +9,7 @@ namespace Quiz_PROJECT.Controllers;
 [Route("[controller]")]
 public class UserController : ControllerBase
 {
-    IUserService _userService;
+    private readonly IUserService _userService;
 
     public UserController(IUserService userService)
     {
@@ -23,20 +23,20 @@ public class UserController : ControllerBase
     }
     
     [HttpGet("{id:int:min(1)}")]
-    public Task<IActionResult> Get(int id)
+    public async Task<IActionResult> Get(int id)
     {
-        return Task.FromResult<IActionResult>(Ok(_userService.GetById(id)));
+        return await Task.FromResult<IActionResult>(Ok(await _userService.GetById(id)));
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] User person)
+    public async Task<IActionResult> Post([FromBody] CreateUserDTO person)
     {
         User newUser = await _userService.Post(person);
         return await Task.FromResult<IActionResult>(Accepted(newUser));
     }
     
     [HttpPut("{id:int:min(1)}")]
-    public async Task<IActionResult> Put([FromBody] User person, int id)
+    public async Task<IActionResult> Put([FromBody] UpdateUserDTO person, int id)
     {
         User updatedPerson = await _userService.Put(person, id);
         return await Task.FromResult<IActionResult>(Ok(updatedPerson));
@@ -45,7 +45,7 @@ public class UserController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> DeleteById(int id)
     {
-        _userService.DeleteById(id);
-        return await Task.FromResult<IActionResult>(Ok(id));
+        var resId = await _userService.DeleteById(id);
+        return await Task.FromResult<IActionResult>(Ok(resId));
     }
 }

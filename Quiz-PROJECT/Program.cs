@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using Quiz_PROJECT;
+using Quiz_PROJECT.Configurations;
 using Quiz_PROJECT.Errors;
-using Quiz_PROJECT.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,10 +14,12 @@ builder.Services.AddControllers().AddJsonOptions(x =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddAutoMapper(typeof(MapperInitializer));
+
 builder.Services.AddDbContext<DBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MyDBConnection")));
 
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddServices();
 
 var app = builder.Build();
 

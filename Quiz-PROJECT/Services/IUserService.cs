@@ -1,12 +1,13 @@
 ﻿using Quiz_PROJECT.Models;
+using Quiz_PROJECT.Models.DTOModels;
 
 namespace Quiz_PROJECT.Services;
 
 public interface IUserService
 {
-    public IEnumerable<User> Get();
-    public User GetById(int id);
-    public Task<User> Post(User user);
-    public Task<User> Put(User user, int id);
-    public void DeleteById(int id);
+    IEnumerable<UserDTO> Get();
+    Task<User> GetById(int id);
+    Task<User> Post(CreateUserDTO user);
+    Task<User> Put(UpdateUserDTO user, int id);
+    Task<int> DeleteById(int id);
 }
