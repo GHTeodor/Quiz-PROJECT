@@ -3,5 +3,5 @@
 public class Question : BaseModel
 {
     public string Title { get; set; }
-    public ICollection<Answers>? Answers { get; set; }
+    public ICollection<Answer>? Answers { get; set; }
 }

@@ -13,10 +13,23 @@ public class AnswerDTO : BaseModelDTO
 
 public class CreateAnswerDTO
 {
+    public string Answer_num { get; set; }
     
+    public int QuestionId { get; set; }
+
+    public Question? Question { get; set; }
 }
 
 public class UpdateAnswerDTO
 {
+    public string Answer_num { get; set; }
+    
+    public int QuestionId { get; set; }
 
+    public Question? Question { get; set; }
+}
+
+public class QuestionFields_AnswerDTO
+{
+    public string Title { get; set; }
 }
