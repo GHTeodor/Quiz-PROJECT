@@ -1,37 +1,31 @@
 ﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Quiz_PROJECT.Errors;
 using Quiz_PROJECT.Models;
 using Quiz_PROJECT.Models.DTOModels;
+using Quiz_PROJECT.UnitOfWork;
 
 namespace Quiz_PROJECT.Services;
 
 public class UserService : IUserService
 {
-    private readonly DBContext _dbContext;
     private readonly IMapper _mapper;
+    private readonly IUnitOfWork _unitOfWork;
 
     public UserService(DBContext dbContext, IMapper mapper)
     {
-        _dbContext = dbContext;
         _mapper = mapper;
+        _unitOfWork = new UnitOfWork.UnitOfWork(dbContext);
     }
 
-    public IEnumerable<UserDTO> Get()
+    public async Task<IEnumerable<UserDTO>> Get()
     {
-        var users =  _mapper.Map<IEnumerable<UserDTO>>(_dbContext.Users);
-        return users;
+        return _mapper.Map<IEnumerable<UserDTO>>(await _unitOfWork.Users.GetAllAsync());
     }
     
     public async Task<User> GetById(int id)
     {
-        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
-        
-        if (user == null)
-            throw new NotFoundException("User not exist", $"There is no user with Id: {id}");
-
-        return user;
+        return await _unitOfWork.Users.GetByIdAsync(id);;
     }
     
     public async Task<User> Post(CreateUserDTO createdUser)
@@ -48,42 +42,40 @@ public class UserService : IUserService
         user.UpdatedAt = null;
         user.Role = Role.USER;
         
-        await _dbContext.Users.AddAsync(user);
-        await _dbContext.SaveChangesAsync();
+        await _unitOfWork.Users.CreateAsync(user);
+        await _unitOfWork.SaveAsync();
         
         return user;
     }
     
     public async Task<User> Put(UpdateUserDTO user, int id)
     {
-        var findUser = await GetById(id);
         User userForUpdate = _mapper.Map(user, await GetById(id));
 
-        var userEmail = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == findUser.Email);
-        var userPhone = await _dbContext.Users.FirstOrDefaultAsync(u => u.Phone == findUser.Phone);
+        // Check if user will have unique email and phone number after update
+        var userByEmail = await _unitOfWork.Users.FindByEmailAsync(userForUpdate.Email);
+        var userByPhone = await _unitOfWork.Users.FindByPhoneAsync(userForUpdate.Phone);
+        
+        if (userByEmail is not null && userByEmail.Id != id)
+            throw new BadRequestException("You can't use this email",
+                $"User with email: {userForUpdate.Email} already exist");
 
-        if (userEmail is not null && userPhone is not null)
-        {
-            if (userEmail.Id != id)
-                throw new BadRequestException("You can't use this email", $"User with email: {userEmail.Email} already exist");
-
-            if (userPhone.Id != id)
-                throw new BadRequestException("You can't use this phone number",
-                    $"User with this phone number: {userPhone.Phone} already exist");
-        }
+        if (userByPhone is not null && userByPhone.Id != id)
+            throw new BadRequestException("You can't use this phone number",
+                $"User with this phone number: {userForUpdate.Phone} already exist");
+        //
 
         userForUpdate.UpdatedAt = DateTimeOffset.Now.ToLocalTime();
         
-        _dbContext.Users.Update(userForUpdate);
-        await _dbContext.SaveChangesAsync();
-        
+        await _unitOfWork.Users.UpdateAsync(userForUpdate);
+        await _unitOfWork.SaveAsync();
+
         return userForUpdate;
     }
-    
-    public async Task<int> DeleteById(int id)
+
+    public async Task DeleteById(int id)
     {
-        _dbContext.Users.Remove(await GetById(id));
-        await _dbContext.SaveChangesAsync();
-        return id;
+        await _unitOfWork.Users.DeleteByIdAsync(id);
+        await _unitOfWork.SaveAsync();
     }
 }

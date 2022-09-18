@@ -11,7 +11,7 @@ public class UserDTO : BaseModelDTO
 
     public string? LastName { get; set; }
     
-    public string FullName => String.IsNullOrEmpty(LastName)? FirstName : $"{FirstName} {LastName}";
+    public string FullName => String.IsNullOrEmpty(LastName) ? FirstName : $"{FirstName} {LastName}";
 
     [Required]
     public string Username { get; set; }
@@ -25,7 +25,8 @@ public class UserDTO : BaseModelDTO
     [UserValidation(ErrorMessage = "User with this phone number has already exist!")]
     public string Phone { get; set; }
 
-    [Range(0, 125)] public int? Age { get; set; }
+    [Range(0, 125)]
+    public int? Age { get; set; }
 
     [Required]
     [Column(TypeName = "nvarchar(24)")]
@@ -62,7 +63,8 @@ public class CreateUserDTO
     [Compare("Password")]
     public string ConfirmPassword { get; set; }
 
-    [Range(0, 125)] public int? Age { get; set; }
+    [Range(0, 125)] 
+    public int? Age { get; set; }
 }
 
 public class UpdateUserDTO
@@ -93,5 +95,6 @@ public class UpdateUserDTO
     [Compare("Password")]
     public string ConfirmPassword { get; set; }
 
-    [Range(0, 125)] public int? Age { get; set; }
+    [Range(0, 125)] 
+    public int? Age { get; set; }
 }

@@ -21,7 +21,7 @@ public class UserController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get()
     {
-        return await Task.FromResult<IActionResult>(Ok(_userService.Get()));
+        return await Task.FromResult<IActionResult>(Ok(await _userService.Get()));
     }
     
     [HttpGet("{id:int:min(1)}")]
@@ -47,7 +47,7 @@ public class UserController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> DeleteById(int id)
     {
-        var resId = await _userService.DeleteById(id);
-        return await Task.FromResult<IActionResult>(Ok(resId));
+        await _userService.DeleteById(id);
+        return await Task.FromResult<IActionResult>(Ok(id));
     }
 }
