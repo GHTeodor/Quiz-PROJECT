@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Quiz_PROJECT.Models;
+using Quiz_PROJECT.Models.DTOModels;
 using Quiz_PROJECT.UnitOfWork;
 
 namespace Quiz_PROJECT.Services;
@@ -15,9 +16,9 @@ public class QuestionService : IQuestionService
         _unitOfWork = new UnitOfWork.UnitOfWork(dbContext);
     }
 
-    public async Task<IEnumerable<Question>> Get()
+    public async Task<IEnumerable<QuestionDTO>> Get()
     {
-        return await _unitOfWork.Questions.GetAllAsync();
+        return _mapper.Map<IEnumerable<QuestionDTO>>(await _unitOfWork.Questions.GetAllAsync());
     }
 
     public async Task<Question> GetById(int id)
@@ -25,8 +26,10 @@ public class QuestionService : IQuestionService
         return await _unitOfWork.Questions.GetByIdAsync(id);
     }
 
-    public async Task<Question> Post(Question question)
+    public async Task<Question> Post(CreateQuestionDTO createAnswer)
     {
+        Question question = _mapper.Map<Question>(createAnswer);
+
         question.CreatedAt = DateTimeOffset.Now.ToLocalTime();
         question.UpdatedAt = null;
         
@@ -36,11 +39,9 @@ public class QuestionService : IQuestionService
         return question;
     }
     
-    public async Task<Question> Put(Question question, int id)
+    public async Task<Question> Put(UpdateQuestionDTO question, int id)
     {
-        Question questionForUpdate = await GetById(id);
-
-        questionForUpdate.Title = question.Title;
+        Question questionForUpdate = _mapper.Map(question, await GetById(id));
 
         questionForUpdate.UpdatedAt = DateTimeOffset.Now.ToLocalTime();
         

@@ -36,7 +36,7 @@ public class UserService : IUserService
                 $"User's fields: {JsonConvert.SerializeObject(typeof(User).GetProperties().Select(f => f.Name))}");
         }
 
-        var user = _mapper.Map<User>(createdUser);
+        User user = _mapper.Map<User>(createdUser);
         
         user.CreatedAt = DateTimeOffset.Now.ToLocalTime();
         user.UpdatedAt = null;

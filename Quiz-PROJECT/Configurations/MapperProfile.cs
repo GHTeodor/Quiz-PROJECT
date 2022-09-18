@@ -12,12 +12,12 @@ public class MapperInitializer : Profile
         CreateMap<User, CreateUserDTO>().ReverseMap();
         CreateMap<User, UpdateUserDTO>().ReverseMap();
 
-        // CreateMap<Question, QuestionDTO>();
-        // CreateMap<Question, CreateQuestionDTO>();
-        // CreateMap<Question, UpdateQuestionDTO>();
+        CreateMap<Question, QuestionDTO>().ReverseMap();
+        CreateMap<Question, CreateQuestionDTO>().ReverseMap();
+        CreateMap<Question, UpdateQuestionDTO>().ReverseMap();
         
-        // CreateMap<Answers, AnswerDTO>();
-        // CreateMap<Answers, CreateAnswerDTO>();
-        // CreateMap<Answers, UpdateAnswerDTO>();
+        CreateMap<Answer, AnswerDTO>().ReverseMap();
+        CreateMap<Answer, CreateAnswerDTO>().ReverseMap();
+        CreateMap<Answer, UpdateAnswerDTO>().ReverseMap();
     }
 }

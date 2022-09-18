@@ -22,7 +22,7 @@ namespace Quiz_PROJECT.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("Quiz_PROJECT.Models.Answers", b =>
+            modelBuilder.Entity("Quiz_PROJECT.Models.Answer", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -70,7 +70,7 @@ namespace Quiz_PROJECT.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Question");
+                    b.ToTable("Questions");
                 });
 
             modelBuilder.Entity("Quiz_PROJECT.Models.User", b =>
@@ -126,7 +126,7 @@ namespace Quiz_PROJECT.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Quiz_PROJECT.Models.Answers", b =>
+            modelBuilder.Entity("Quiz_PROJECT.Models.Answer", b =>
                 {
                     b.HasOne("Quiz_PROJECT.Models.Question", "Question")
                         .WithMany("Answers")

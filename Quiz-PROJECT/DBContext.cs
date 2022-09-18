@@ -17,7 +17,7 @@ public class DBContext : DbContext
             .HasForeignKey(ab => ab.QuestionId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        modelBuilder.Entity<Answers>()
+        modelBuilder.Entity<Answer>()
              .HasOne(a => a.Question)
              .WithMany(b => b.Answers)
              .OnDelete(DeleteBehavior.NoAction);
@@ -26,6 +26,6 @@ public class DBContext : DbContext
     }
 
     public DbSet<User> Users { get; set; }
-    public DbSet<Question> Question { get; set; }
-    public DbSet<Answers> Answers { get; set; }
+    public DbSet<Question> Questions { get; set; }
+    public DbSet<Answer> Answers { get; set; }
 }

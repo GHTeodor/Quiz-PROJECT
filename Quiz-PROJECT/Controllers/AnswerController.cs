@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Quiz_PROJECT.Models;
+using Quiz_PROJECT.Models.DTOModels;
 using Quiz_PROJECT.Services;
 
 namespace Quiz_PROJECT.Controllers;
@@ -30,16 +31,16 @@ public class AnswerController : ControllerBase
     }
     
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] Answers answer)
+    public async Task<IActionResult> Post([FromBody] CreateAnswerDTO answer)
     {
-        var newAnswer = await _answerService.Post(answer);
+        Answer newAnswer = await _answerService.Post(answer);
 
         return await Task.FromResult<IActionResult>(Accepted(newAnswer));
     }    
     [HttpPut("{id:int:min(1)}")]
-    public async Task<IActionResult> Put([FromBody] Answers answer, int id)
+    public async Task<IActionResult> Put([FromBody] UpdateAnswerDTO answer, int id)
     {
-        Answers updatedAnswer = await _answerService.Put(answer, id);
+        Answer updatedAnswer = await _answerService.Put(answer, id);
         return await Task.FromResult<IActionResult>(Ok(updatedAnswer));
     }
     

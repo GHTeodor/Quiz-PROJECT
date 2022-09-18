@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Text.RegularExpressions;
+using Microsoft.EntityFrameworkCore;
 using Quiz_PROJECT.Errors;
 using Quiz_PROJECT.Models;
 
@@ -45,11 +46,12 @@ public class UserRepository : IUserRepository
     
     public async Task<User> FindByEmailAsync(string email)
     {
-        return (await _dbContext.Users.SingleOrDefaultAsync(u => u.Email == email))!;
+        return (await _dbContext.Users.SingleOrDefaultAsync(u => u.Email.ToUpper() == email.ToUpper()))!;
     }
     
     public async Task<User> FindByPhoneAsync(string phone)
     {
-        return (await _dbContext.Users.SingleOrDefaultAsync(u => u.Phone == phone))!;
+        string phoneNumber = Regex.Replace(phone, "[^0-9]", ""); // only numbers
+        return (await _dbContext.Users.SingleOrDefaultAsync(u => u.Phone == phone || u.Phone == phoneNumber))!;
     }
 }

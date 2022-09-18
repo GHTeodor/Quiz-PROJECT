@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Quiz_PROJECT.Models;
+using Quiz_PROJECT.Models.DTOModels;
 using Quiz_PROJECT.UnitOfWork;
 
 namespace Quiz_PROJECT.Services;
@@ -15,18 +16,20 @@ public class AnswerService : IAnswerService
         _unitOfWork = new UnitOfWork.UnitOfWork(dbContext);
     }
 
-    public async Task<IEnumerable<Answers>> Get()
+    public async Task<IEnumerable<AnswerDTO>> Get()
     {
-        return await _unitOfWork.Answers.GetAllAsync();
+        return _mapper.Map<IEnumerable<AnswerDTO>>(await _unitOfWork.Answers.GetAllAsync());
     }
 
-    public async Task<Answers> GetById(int id)
+    public async Task<Answer> GetById(int id)
     {
         return await _unitOfWork.Answers.GetByIdAsync(id);
     }
     
-    public async Task<Answers> Post(Answers answer)
+    public async Task<Answer> Post(CreateAnswerDTO createAnswer)
     {
+        Answer answer = _mapper.Map<Answer>(createAnswer);
+
         answer.CreatedAt = DateTimeOffset.Now.ToLocalTime();
         answer.UpdatedAt = null;
         
@@ -36,12 +39,9 @@ public class AnswerService : IAnswerService
         return answer;
     }
 
-    public async Task<Answers> Put(Answers answer, int id)
+    public async Task<Answer> Put(UpdateAnswerDTO answer, int id)
     {
-        Answers answerForUpdate = await GetById(id);
-
-        answerForUpdate.Answer_num = answer.Answer_num;
-        answerForUpdate.QuestionId = answer.QuestionId;
+        Answer answerForUpdate = _mapper.Map(answer, await GetById(id));
 
         answerForUpdate.UpdatedAt = DateTimeOffset.Now.ToLocalTime();
         

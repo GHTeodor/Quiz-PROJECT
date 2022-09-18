@@ -7,6 +7,6 @@ public interface IUnitOfWork : IDisposable
 {
     IUserRepository Users { get; }
     IRepository<Question> Questions { get; }
-    IRepository<Answers> Answers { get; }
+    IRepository<Answer> Answers { get; }
     Task SaveAsync();
 }

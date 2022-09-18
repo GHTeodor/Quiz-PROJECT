@@ -15,12 +15,12 @@ public class QuestionRepository : IRepository<Question>
     
     public async Task<IEnumerable<Question>> GetAllAsync()
     {
-        return await _dbContext.Question.Include(a => a.Answers).ToListAsync();
+        return await _dbContext.Questions.Include(a => a.Answers).ToListAsync();
     }
 
     public async Task<Question> GetByIdAsync(int id)
     {
-        var question = await _dbContext.Question.SingleOrDefaultAsync(q=>q.Id == id);
+        var question = await _dbContext.Questions.SingleOrDefaultAsync(q=>q.Id == id);
 
         if (question is null)
             throw new NotFoundException("Question not exist", $"There is no question with Id: {id}");
@@ -30,16 +30,16 @@ public class QuestionRepository : IRepository<Question>
 
     public async Task CreateAsync(Question question)
     {
-        await _dbContext.Question.AddAsync(question);
+        await _dbContext.Questions.AddAsync(question);
     }
 
     public async Task UpdateAsync(Question question)
     {
-        _dbContext.Question.Update(question);
+        _dbContext.Questions.Update(question);
     }
 
     public async Task DeleteByIdAsync(int id)
     {
-        _dbContext.Question.Remove(await GetByIdAsync(id));
+        _dbContext.Questions.Remove(await GetByIdAsync(id));
     }
 }

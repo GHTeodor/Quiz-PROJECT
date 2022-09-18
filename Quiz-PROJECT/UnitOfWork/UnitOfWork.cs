@@ -12,12 +12,12 @@ public class UnitOfWork : IUnitOfWork
         _dbContext = dbContext;
         Users = new UserRepository(_dbContext);
         Questions = new QuestionRepository(_dbContext);
-        Answers = new AnswersRepository(_dbContext);
+        Answers = new AnswerRepository(_dbContext);
     }
 
     public IUserRepository Users { get; }
     public IRepository<Question> Questions { get; }
-    public IRepository<Answers> Answers { get; }
+    public IRepository<Answer> Answers { get; }
 
     public async Task SaveAsync()
     {

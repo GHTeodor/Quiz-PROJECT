@@ -4,21 +4,21 @@ using Quiz_PROJECT.Models;
 
 namespace Quiz_PROJECT.Repositories;
 
-public class AnswersRepository : IRepository<Answers>
+public class AnswerRepository : IRepository<Answer>
 {
     private readonly DBContext _dbContext;
 
-    public AnswersRepository(DBContext dbContext)
+    public AnswerRepository(DBContext dbContext)
     {
         _dbContext = dbContext;
     }
 
-    public async Task<IEnumerable<Answers>> GetAllAsync()
+    public async Task<IEnumerable<Answer>> GetAllAsync()
     {
         return await _dbContext.Answers.Include(a => a.Question).ToListAsync();
     }
 
-    public async Task<Answers> GetByIdAsync(int id)
+    public async Task<Answer> GetByIdAsync(int id)
     {
         var answer = await _dbContext.Answers.SingleOrDefaultAsync(a => a.Id == id);
 
@@ -28,14 +28,14 @@ public class AnswersRepository : IRepository<Answers>
         return answer;
     }
 
-    public async Task CreateAsync(Answers answers)
+    public async Task CreateAsync(Answer answer)
     {
-        await _dbContext.Answers.AddAsync(answers);
+        await _dbContext.Answers.AddAsync(answer);
     }
 
-    public async Task UpdateAsync(Answers answers)
+    public async Task UpdateAsync(Answer answer)
     {
-        _dbContext.Answers.Update(answers);
+        _dbContext.Answers.Update(answer);
     }
 
     public async Task DeleteByIdAsync(int id)
