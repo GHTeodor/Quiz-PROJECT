@@ -23,11 +23,30 @@ public class AnswerController : ControllerBase
         return await Task.FromResult<IActionResult>(Ok(await _answerService.Get()));
     }
     
+    [HttpGet("{id:int:min(1)}")]
+    public async Task<IActionResult> Get(int id)
+    {
+        return await Task.FromResult<IActionResult>(Ok(await _answerService.GetById(id)));
+    }
+    
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] Answers answer)
     {
         var newAnswer = await _answerService.Post(answer);
 
         return await Task.FromResult<IActionResult>(Accepted(newAnswer));
+    }    
+    [HttpPut("{id:int:min(1)}")]
+    public async Task<IActionResult> Put([FromBody] Answers answer, int id)
+    {
+        Answers updatedAnswer = await _answerService.Put(answer, id);
+        return await Task.FromResult<IActionResult>(Ok(updatedAnswer));
+    }
+    
+    [HttpDelete("{id:int:min(1)}")]
+    public async Task<IActionResult> DeleteById(int id)
+    {
+        await _answerService.DeleteById(id);
+        return await Task.FromResult<IActionResult>(Ok(id));
     }
 }

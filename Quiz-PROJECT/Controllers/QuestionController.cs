@@ -22,6 +22,12 @@ public class QuestionController : ControllerBase
     {
         return await Task.FromResult<IActionResult>(Ok(await _questionService.Get()));
     }
+    
+    [HttpGet("{id:int:min(1)}")]
+    public async Task<IActionResult> Get(int id)
+    {
+        return await Task.FromResult<IActionResult>(Ok(await _questionService.GetById(id)));
+    }
 
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] Question question)
@@ -29,5 +35,19 @@ public class QuestionController : ControllerBase
         var newQuestion = await _questionService.Post(question);
 
         return await Task.FromResult<IActionResult>(Accepted(newQuestion));
+    }
+    
+    [HttpPut("{id:int:min(1)}")]
+    public async Task<IActionResult> Put([FromBody] Question question, int id)
+    {
+        Question updatedQuestion = await _questionService.Put(question, id);
+        return await Task.FromResult<IActionResult>(Ok(updatedQuestion));
+    }
+    
+    [HttpDelete("{id:int:min(1)}")]
+    public async Task<IActionResult> DeleteById(int id)
+    {
+        await _questionService.DeleteById(id);
+        return await Task.FromResult<IActionResult>(Ok(id));
     }
 }

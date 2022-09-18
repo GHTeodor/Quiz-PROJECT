@@ -22,6 +22,7 @@ builder.Services.AddDbContext<DBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MyDBConnection")));
 
 builder.Services.AddServices();
+builder.Services.AddRepositories();
 
 var app = builder.Build();
 
