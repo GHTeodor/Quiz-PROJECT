@@ -16,6 +16,8 @@ builder.Services.AddControllers().AddJsonOptions(x =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddSwagger();
+
 builder.Services.AddAutoMapper(typeof(MapperInitializer));
 
 builder.Services.AddDbContext<DBContext>(options =>
