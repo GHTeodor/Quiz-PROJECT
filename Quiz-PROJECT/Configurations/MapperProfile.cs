@@ -17,7 +17,5 @@ public class MapperInitializer : Profile
         CreateMap<Question, UpdateQuestionDTO>().ReverseMap();
         
         CreateMap<Answer, AnswerDTO>().ReverseMap();
-        CreateMap<Answer, CreateAnswerDTO>().ReverseMap();
-        CreateMap<Answer, UpdateAnswerDTO>().ReverseMap();
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Quiz_PROJECT.Errors;
 using Quiz_PROJECT.Models;
 
@@ -19,12 +20,10 @@ public class UserRepository : IUserRepository
         return _dbContext.Users;
     }
     
-    public async Task<User> GetByIdAsync(int id)
+    public async Task<User> GetByIdAsync(long id)
     {
-        var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Id == id);
-        
-        if (user is null)
-            throw new NotFoundException("User not exist", $"There is no user with Id: {id}");
+        User user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Id == id)
+            ?? throw new NotFoundException("User not exist", $"There is no user with Id: {id}");
 
         return user;
     }
@@ -39,19 +38,21 @@ public class UserRepository : IUserRepository
         _dbContext.Users.Update(user);
     }
 
-    public async Task DeleteByIdAsync(int id)
+    public async Task DeleteByIdAsync(long id)
     {   
         _dbContext.Users.Remove(await GetByIdAsync(id));
     }
     
     public async Task<User> FindByEmailAsync(string email)
     {
+        // User user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Email.ToUpper() == email.ToUpper())
+                    // ?? throw new NotFoundException("User not exist", $"There is no user with Eamil: {email}");
+        
         return (await _dbContext.Users.SingleOrDefaultAsync(u => u.Email.ToUpper() == email.ToUpper()))!;
     }
-    
+
     public async Task<User> FindByPhoneAsync(string phone)
     {
-        string phoneNumber = Regex.Replace(phone, "[^0-9]", ""); // only numbers
-        return (await _dbContext.Users.SingleOrDefaultAsync(u => u.Phone == phone || u.Phone == phoneNumber))!;
+        return (await _dbContext.Users.SingleOrDefaultAsync(u => u.Phone == phone))!; 
     }
 }

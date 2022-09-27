@@ -2,6 +2,10 @@
 
 public class Question : BaseModel
 {
-    public string Title { get; set; }
-    public ICollection<Answer>? Answers { get; set; }
+    public string Category { get; set; }
+    public string Type { get; set; }
+    public string Difficulty { get; set; }
+    public string TitleQuestion { get; set; }
+    public string CorrectAnswer { get; set; }
+    public ICollection<Answer> IncorrectAnswers { get; set; }
 }

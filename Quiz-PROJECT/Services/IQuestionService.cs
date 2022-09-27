@@ -5,9 +5,9 @@ namespace Quiz_PROJECT.Services;
 
 public interface IQuestionService
 {
-    Task<IEnumerable<QuestionDTO>> Get();
-    Task<Question> GetById(int id);
-    Task<Question> Post(CreateQuestionDTO question);
-    Task<Question> Put(UpdateQuestionDTO person, int id);
-    Task DeleteById(int id);
+    Task<IEnumerable<QuestionDTO>> GetAllAsync();
+    Task<Question> GetByIdAsync(long id);
+    Task<Question> CreateAsync(CreateQuestionDTO question);
+    Task<Question> UpdateByIdAsync(UpdateQuestionDTO person, long id);
+    Task DeleteByIdAsync(long id);
 }

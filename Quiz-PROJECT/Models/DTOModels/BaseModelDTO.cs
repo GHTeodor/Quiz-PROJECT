@@ -4,7 +4,8 @@ namespace Quiz_PROJECT.Models.DTOModels;
 
 public class BaseModelDTO
 {
-    public int Id { get; set; }
+    [Key]
+    public long Id { get; set; }
     
     [Required]
     public DateTimeOffset CreatedAt { get; set; }
