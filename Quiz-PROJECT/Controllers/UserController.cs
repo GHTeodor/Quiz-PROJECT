@@ -19,35 +19,35 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> GetAllAsync()
     {
-        return await Task.FromResult<IActionResult>(Ok(await _userService.Get()));
+        return await Task.FromResult<IActionResult>(Ok(await _userService.GetAllAsync()));
     }
     
-    [HttpGet("{id:int:min(1)}")]
-    public async Task<IActionResult> Get(int id)
+    [HttpGet("{id:long:min(1)}")]
+    public async Task<IActionResult> GetByIdAsync(long id)
     {
-        return await Task.FromResult<IActionResult>(Ok(await _userService.GetById(id)));
+        return await Task.FromResult<IActionResult>(Ok(await _userService.GetByIdAsync(id)));
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] CreateUserDTO person)
+    public async Task<IActionResult> PostCreateAsync([FromBody] CreateUserDTO person)
     {
-        User newUser = await _userService.Post(person);
+        User newUser = await _userService.CreateAsync(person);
         return await Task.FromResult<IActionResult>(Accepted(newUser));
     }
     
-    [HttpPut("{id:int:min(1)}")]
-    public async Task<IActionResult> Put([FromBody] UpdateUserDTO person, int id)
+    [HttpPut("{id:long:min(1)}")]
+    public async Task<IActionResult> PutUpdateByIdAsync([FromBody] UpdateUserDTO person, int id)
     {
-        User updatedPerson = await _userService.Put(person, id);
+        User updatedPerson = await _userService.UpdateByIdAsync(person, id);
         return await Task.FromResult<IActionResult>(Ok(updatedPerson));
     }
     
-    [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> DeleteById(int id)
+    [HttpDelete("{id:long:min(1)}")]
+    public async Task<IActionResult> DeleteByIdAsync(long id)
     {
-        await _userService.DeleteById(id);
+        await _userService.DeleteByIdAsync(id);
         return await Task.FromResult<IActionResult>(Ok(id));
     }
 }

@@ -18,15 +18,16 @@ public class UserDTO : BaseModelDTO
 
     [Required]
     [EmailAddress(ErrorMessage = "Invalid email")]
-    [UserValidation(ErrorMessage = "User with this email has already exist!")]
+    [UserEmailPhoneUniqueValidation(ErrorMessage = "You can't use this email. User with this email has already exist!")]
     public string Email { get; set; }
 
     [Phone(ErrorMessage = "Invalid phone number")]
-    [UserValidation(ErrorMessage = "User with this phone number has already exist!")]
+    [UserEmailPhoneUniqueValidation(ErrorMessage = "You can't use this phone number. User with this phone number has already exist!")]
+    [MaxLength(18, ErrorMessage = "Max length 18 symbols")]
     public string Phone { get; set; }
 
     [Range(0, 125)]
-    public int? Age { get; set; }
+    public byte? Age { get; set; }
 
     [Required]
     [Column(TypeName = "nvarchar(24)")]
@@ -47,15 +48,17 @@ public class CreateUserDTO
 
     [Required]
     [EmailAddress(ErrorMessage = "Invalid email")]
-    [UserValidation(ErrorMessage = "User with this email has already exist!")]
+    [UserEmailPhoneUniqueValidation(ErrorMessage = "You can't use this email. User with this email has already exist!")]
     public string Email { get; set; }
 
     [Phone(ErrorMessage = "Invalid phone number")]
-    [UserValidation(ErrorMessage = "User with this phone number has already exist!")]
+    [UserEmailPhoneUniqueValidation(ErrorMessage = "You can't use this phone number. User with this phone number has already exist!")]
+    [MaxLength(18, ErrorMessage = "Max length 18 symbols")]
     public string Phone { get; set; }
 
     [Required]
     [DataType(DataType.Password)]
+    [MinLength(6, ErrorMessage = "Must be at least 6 symbols")]
     public string Password { get; set; }
 
     [Required]
@@ -64,7 +67,7 @@ public class CreateUserDTO
     public string ConfirmPassword { get; set; }
 
     [Range(0, 125)] 
-    public int? Age { get; set; }
+    public byte? Age { get; set; }
 }
 
 public class UpdateUserDTO
@@ -84,10 +87,12 @@ public class UpdateUserDTO
     public string Email { get; set; }
 
     [Phone(ErrorMessage = "Invalid phone number")]
+    [MaxLength(18, ErrorMessage = "Max length 18 symbols")]
     public string Phone { get; set; }
 
     [Required]
     [DataType(DataType.Password)]
+    [MinLength(8, ErrorMessage = "Must be at least 8 symbols")]
     public string Password { get; set; }
 
     [Required]
@@ -96,5 +101,5 @@ public class UpdateUserDTO
     public string ConfirmPassword { get; set; }
 
     [Range(0, 125)] 
-    public int? Age { get; set; }
+    public byte? Age { get; set; }
 }

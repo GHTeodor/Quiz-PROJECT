@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 using Quiz_PROJECT.Models.Validators;
 
 namespace Quiz_PROJECT.Models;
@@ -16,11 +18,12 @@ public class User : BaseModel
 
     [Required]
     [EmailAddress(ErrorMessage = "Invalid email")]
-    [UserValidation(ErrorMessage = "User with this email has already exist!")]
+    [UserEmailPhoneUniqueValidation(ErrorMessage = "You can't use this email. User with this email has already exist!")]
     public string Email { get; set; }
 
     [Phone(ErrorMessage = "Invalid phone number")]
-    [UserValidation(ErrorMessage = "User with this phone number has already exist!")]
+    [UserEmailPhoneUniqueValidation(ErrorMessage = "You can't use this phone number. User with this phone number has already exist!")]
+    [MaxLength(18, ErrorMessage = "Max length 18 symbols")]
     public string Phone { get; set; }
 
     [Required]
@@ -32,7 +35,7 @@ public class User : BaseModel
     [Compare("Password")]
     public string ConfirmPassword { get; set; }
 
-    [Range(0, 125)] public int? Age { get; set; }
+    [Range(0, 125)] public byte? Age { get; set; }
 
     [Required]
     [Column(TypeName = "nvarchar(24)")] 

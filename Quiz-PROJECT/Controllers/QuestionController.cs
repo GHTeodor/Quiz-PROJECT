@@ -19,36 +19,35 @@ public class QuestionController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> GetAllAsync()
     {
-        return await Task.FromResult<IActionResult>(Ok(await _questionService.Get()));
+        return await Task.FromResult<IActionResult>(Ok(await _questionService.GetAllAsync()));
     }
     
-    [HttpGet("{id:int:min(1)}")]
-    public async Task<IActionResult> Get(int id)
+    [HttpGet("{id:long:min(1)}")]
+    public async Task<IActionResult> GetByIdAsync(long id)
     {
-        return await Task.FromResult<IActionResult>(Ok(await _questionService.GetById(id)));
+        return await Task.FromResult<IActionResult>(Ok(await _questionService.GetByIdAsync(id)));
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] CreateQuestionDTO question)
+    public async Task<IActionResult> PostCreateAsync([FromBody] CreateQuestionDTO question)
     {
-        Question newQuestion = await _questionService.Post(question);
-
+        Question newQuestion = await _questionService.CreateAsync(question);
         return await Task.FromResult<IActionResult>(Accepted(newQuestion));
     }
     
-    [HttpPut("{id:int:min(1)}")]
-    public async Task<IActionResult> Put([FromBody] UpdateQuestionDTO question, int id)
+    [HttpPut("{id:long:min(1)}")]
+    public async Task<IActionResult> PutUpdateByIdAsync([FromBody] UpdateQuestionDTO question, long id)
     {
-        Question updatedQuestion = await _questionService.Put(question, id);
+        Question updatedQuestion = await _questionService.UpdateByIdAsync(question, id);
         return await Task.FromResult<IActionResult>(Ok(updatedQuestion));
     }
     
-    [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> DeleteById(int id)
+    [HttpDelete("{id:long:min(1)}")]
+    public async Task<IActionResult> DeleteByIdAsync(long id)
     {
-        await _questionService.DeleteById(id);
+        await _questionService.DeleteByIdAsync(id);
         return await Task.FromResult<IActionResult>(Ok(id));
     }
 }
