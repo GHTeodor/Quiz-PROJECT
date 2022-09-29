@@ -28,16 +28,20 @@ public class User : BaseModel
 
     [Required]
     [DataType(DataType.Password)]
-    public string Password { get; set; }
+    public byte[] PasswordHash { get; set; }
 
     [Required]
     [DataType(DataType.Password)]
     [Compare("Password")]
-    public string ConfirmPassword { get; set; }
+    public byte[] ConfirmPasswordHash { get; set; }
+    
+    public byte[] PasswordSalt { get; set; }
 
     [Range(0, 125)] public byte? Age { get; set; }
 
     [Required]
     [Column(TypeName = "nvarchar(24)")] 
     public Role Role { get; set; } = Role.USER;
+    
+    public RefreshToken RefreshToken { get; set; }
 }

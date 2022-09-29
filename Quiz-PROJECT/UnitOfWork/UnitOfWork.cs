@@ -13,10 +13,12 @@ public class UnitOfWork : IUnitOfWork
         _dbContext = dbContext;
         Users = new UserRepository(_dbContext);
         Questions = new QuestionRepository(_dbContext);
+        RefreshTokens = new RefreshTokenRepository(_dbContext);
     }
 
     public IUserRepository Users { get; }
     public IRepository<Question> Questions { get; }
+    public IRefreshTokenRepository RefreshTokens { get; }
 
     public async Task SaveAsync()
     {

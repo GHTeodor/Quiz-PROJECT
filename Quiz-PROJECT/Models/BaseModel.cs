@@ -8,7 +8,7 @@ public class BaseModel
     public long Id { get; set; }
     
     [Required]
-    public DateTimeOffset CreatedAt { get; set; }
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.Now.ToLocalTime();
     
     public DateTimeOffset? UpdatedAt { get; set; }
 }

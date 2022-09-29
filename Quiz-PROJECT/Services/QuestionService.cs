@@ -30,7 +30,6 @@ public class QuestionService : IQuestionService
     {
         Question question = _mapper.Map<Question>(createAnswer);
 
-        question.CreatedAt = DateTimeOffset.Now.ToLocalTime();
         question.UpdatedAt = null;
         
         await _unitOfWork.Questions.CreateAsync(question); 

@@ -22,8 +22,8 @@ public class UserRepository : IUserRepository
     
     public async Task<User> GetByIdAsync(long id)
     {
-        User user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Id == id)
-            ?? throw new NotFoundException("User not exist", $"There is no user with Id: {id}");
+        User user = await _dbContext.Users.Include(u => u.RefreshToken).SingleOrDefaultAsync(u => u.Id == id)
+                    ?? throw new NotFoundException("User not exist", $"There is no user with Id: {id}");
 
         return user;
     }

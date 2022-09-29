@@ -12,5 +12,6 @@ public static class RepositoriesManager
 
         services.AddTransient<IUserRepository, UserRepository>();
         services.AddTransient<IRepository<Question>, QuestionRepository>();
+        services.AddTransient<IRefreshTokenRepository, RefreshTokenRepository>();
     }
 }

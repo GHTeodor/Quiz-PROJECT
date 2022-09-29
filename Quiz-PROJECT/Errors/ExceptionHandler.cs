@@ -22,6 +22,14 @@ public class ExceptionHandler
         {
             await HandleExceptionAsync(context, e);
         }
+        catch (UnauthorizedException e)
+        {
+            await HandleExceptionAsync(context, e);
+        }
+        catch (ForbiddenException e)
+        {
+            await HandleExceptionAsync(context, e);
+        }
         catch (NotFoundException e)
         {
             await HandleExceptionAsync(context, e);

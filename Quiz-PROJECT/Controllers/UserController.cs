@@ -30,13 +30,6 @@ public class UserController : ControllerBase
         return await Task.FromResult<IActionResult>(Ok(await _userService.GetByIdAsync(id)));
     }
 
-    [HttpPost]
-    public async Task<IActionResult> PostCreateAsync([FromBody] CreateUserDTO person)
-    {
-        User newUser = await _userService.CreateAsync(person);
-        return await Task.FromResult<IActionResult>(Accepted(newUser));
-    }
-    
     [HttpPut("{id:long:min(1)}")]
     public async Task<IActionResult> PutUpdateByIdAsync([FromBody] UpdateUserDTO person, int id)
     {

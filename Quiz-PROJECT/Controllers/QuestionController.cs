@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Cors;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Quiz_PROJECT.Models;
 using Quiz_PROJECT.Models.DTOModels;
@@ -9,6 +10,7 @@ namespace Quiz_PROJECT.Controllers;
 [ApiController]
 [Route("[controller]")]
 [EnableCors]
+[Authorize]
 public class QuestionController : ControllerBase
 {
     private readonly IQuestionService _questionService;
@@ -25,6 +27,7 @@ public class QuestionController : ControllerBase
     }
     
     [HttpGet("{id:long:min(1)}")]
+    [Authorize(Roles = "USER")]
     public async Task<IActionResult> GetByIdAsync(long id)
     {
         return await Task.FromResult<IActionResult>(Ok(await _questionService.GetByIdAsync(id)));

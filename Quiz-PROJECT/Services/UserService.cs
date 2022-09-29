@@ -28,28 +28,7 @@ public class UserService : IUserService
     {
         return await _unitOfWork.Users.GetByIdAsync(id);;
     }
-    
-    public async Task<User> CreateAsync(CreateUserDTO createdUser)
-    {
-        if (createdUser == null)
-        {
-            throw new BadRequestException("Wrong field(s)",
-                $"User's fields: {JsonConvert.SerializeObject(typeof(User).GetProperties().Select(f => f.Name))}");
-        }
 
-        User user = _mapper.Map<User>(createdUser);
-        
-        user.CreatedAt = DateTimeOffset.Now.ToLocalTime();
-        user.UpdatedAt = null;
-        user.Role = Role.USER;
-
-        await _unitOfWork.Users.CreateAsync(user);
-        await _unitOfWork.SaveAsync();
-        await _unitOfWork.DisposeAsync();
-
-        return user;
-    }
-    
     public async Task<User> UpdateByIdAsync(UpdateUserDTO user, long id)
     {
         User userForUpdate = _mapper.Map(user, await GetByIdAsync(id));
