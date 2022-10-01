@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Quiz_PROJECT.Errors;
 using Quiz_PROJECT.Models;
 
 namespace Quiz_PROJECT.Repositories;
@@ -25,7 +24,7 @@ public class RefreshTokenRepository: IRefreshTokenRepository
     
     public async Task UpdateAsync(RefreshToken refreshToken)
     {
-        _dbContext.RefreshTokens.Update(refreshToken);
+        await Task.FromResult(_dbContext.RefreshTokens.Update(refreshToken));
     }
 
     public async Task DeleteByUserIdAsync(long userId)

@@ -1,6 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
+﻿using Microsoft.EntityFrameworkCore;
 using Quiz_PROJECT.Errors;
 using Quiz_PROJECT.Models;
 
@@ -22,10 +20,8 @@ public class UserRepository : IUserRepository
     
     public async Task<User> GetByIdAsync(long id)
     {
-        User user = await _dbContext.Users.Include(u => u.RefreshToken).SingleOrDefaultAsync(u => u.Id == id)
-                    ?? throw new NotFoundException("User not exist", $"There is no user with Id: {id}");
-
-        return user;
+        return await _dbContext.Users.Include(u => u.RefreshToken).SingleOrDefaultAsync(u => u.Id == id)
+               ?? throw new NotFoundException("User not exist", $"There is no user with Id: {id}");;
     }
 
     public async Task CreateAsync(User user)
@@ -35,7 +31,7 @@ public class UserRepository : IUserRepository
 
     public async Task UpdateAsync(User user)
     {
-        _dbContext.Users.Update(user);
+        await Task.FromResult(_dbContext.Users.Update(user));
     }
 
     public async Task DeleteByIdAsync(long id)

@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using Quiz_PROJECT.Errors;
 using Quiz_PROJECT.Models;
 
@@ -66,7 +65,7 @@ public class QuestionRepository : IRepository<Question>
             }
         }
 
-        _dbContext.Questions.Update(question);
+        await Task.FromResult(_dbContext.Questions.Update(question));
     }
 
     public async Task DeleteByIdAsync(long id)

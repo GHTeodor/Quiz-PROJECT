@@ -1,6 +1,4 @@
-﻿using Quiz_PROJECT.Models;
-using Quiz_PROJECT.Models.DTOModels;
-using Quiz_PROJECT.Services;
+﻿using Quiz_PROJECT.Services;
 
 namespace Quiz_PROJECT.Configurations;
 

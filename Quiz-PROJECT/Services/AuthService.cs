@@ -25,7 +25,7 @@ public class AuthService : IAuthService
         _unitOfWork = new UnitOfWork.UnitOfWork(dbContext);
     }
 
-    public async Task<Dictionary<string, string>> GetInfoFromToken()
+    public async Task<Dictionary<string, string>> GetInfoFromTokenAsync()
     {
         Dictionary<string, string> result = new Dictionary<string, string>();
         
@@ -40,7 +40,7 @@ public class AuthService : IAuthService
         return await Task.FromResult(result);
     }
 
-    public async Task<User> Register(CreateUserDTO request)
+    public async Task<User> RegisterAsync(CreateUserDTO request)
     {
         User user = _mapper.Map<User>(request);
 
@@ -48,8 +48,7 @@ public class AuthService : IAuthService
         user.PasswordHash = passwordHash;
         user.ConfirmPasswordHash = confirmPasswordHash;
         user.PasswordSalt = passwordSalt;
-
-        user.CreatedAt = DateTimeOffset.Now.ToLocalTime();
+        
         user.UpdatedAt = null;
         user.Role = Role.USER;
         
@@ -60,7 +59,7 @@ public class AuthService : IAuthService
         return user;
     }
 
-    public async Task<string> Login(AuthLoginUserDTO request)
+    public async Task<string> LoginAsync(AuthLoginUserDTO request)
     {
         User user = await _unitOfWork.Users.FindByEmailAsync(request.Email);
         
@@ -76,7 +75,7 @@ public class AuthService : IAuthService
         return _CreateToken(user);
     }
 
-    public async Task<string> RefreshToken()
+    public async Task<string> RefreshTokenAsync()
     {
         var refreshToken = _contextAccessor.HttpContext.Request.Cookies["refreshToken"];
         long userId = long.Parse(_contextAccessor.HttpContext.Request.Cookies["userId"]!);
@@ -94,6 +93,37 @@ public class AuthService : IAuthService
         await _SetRefreshToken(newRefreshToken, user.Id);
         
         return await Task.FromResult(token);
+    }
+
+    public async Task<User> UpdateByIdAsync(UpdateUserDTO user, long id)
+    {
+        User updatedUser = _mapper.Map(user, await _unitOfWork.Users.GetByIdAsync(id));
+        
+        _CreatePasswordHash(user.Password, user.ConfirmPassword, out byte[] passwordHash, out byte[] confirmPasswordHash, out byte[] passwordSalt);
+        updatedUser.PasswordHash = passwordHash;
+        updatedUser.ConfirmPasswordHash = confirmPasswordHash;
+        updatedUser.PasswordSalt = passwordSalt;
+        
+        // Check if user will have unique email and phone number after update
+        var userByEmail = await _unitOfWork.Users.FindByEmailAsync(updatedUser.Email);
+        var userByPhone = await _unitOfWork.Users.FindByPhoneAsync(updatedUser.Phone);
+        
+        if (userByEmail is not null && userByEmail.Id != id)
+            throw new BadRequestException("You can't use this email",
+                $"User with email: {updatedUser.Email} already exist");
+        
+        if (userByPhone is not null && userByPhone.Id != id)
+            throw new BadRequestException("You can't use this phone number",
+                $"User with this phone number: {updatedUser.Phone} already exist");
+        //
+        
+        updatedUser.UpdatedAt = DateTimeOffset.Now.ToLocalTime();
+        
+        await _unitOfWork.Users.UpdateAsync(updatedUser);
+        await _unitOfWork.SaveAsync();
+        await _unitOfWork.DisposeAsync();
+        
+        return updatedUser;
     }
 
     // ---------------------------------------------------------------------

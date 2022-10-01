@@ -1,7 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
 using Quiz_PROJECT.Models.Validators;
 
 namespace Quiz_PROJECT.Models;

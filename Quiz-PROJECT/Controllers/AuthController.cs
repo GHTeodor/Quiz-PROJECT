@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Quiz_PROJECT.Models;
 using Quiz_PROJECT.Models.DTOModels;
 using Quiz_PROJECT.Services;
-using Quiz_PROJECT.UnitOfWork;
 
 namespace Quiz_PROJECT.Controllers;
 
@@ -20,26 +18,32 @@ public class AuthController : ControllerBase
     
     [HttpGet("[action]")]
     [Authorize]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> GetAsync()
     {
-        return Ok(await _authService.GetInfoFromToken());
+        return Ok(await _authService.GetInfoFromTokenAsync());
     }
 
     [HttpPost("[action]")]
-    public async Task<IActionResult> Register([FromBody] CreateUserDTO user)
+    public async Task<IActionResult> RegisterAsync([FromBody] CreateUserDTO user)
     {
-        return Accepted(await _authService.Register(user));
+        return Accepted(await _authService.RegisterAsync(user));
     }
     
     [HttpPost("[action]")]
-    public async Task<IActionResult> Login([FromBody] AuthLoginUserDTO user)
+    public async Task<IActionResult> LoginAsync([FromBody] AuthLoginUserDTO user)
     {
-        return Accepted(await _authService.Login(user));
+        return Accepted(await _authService.LoginAsync(user));
     }
 
     [HttpPost("[action]")]
-    public async Task<ActionResult> RefreshToken()
+    public async Task<ActionResult> RefreshTokenAsync()
     {
-        return Ok(await _authService.RefreshToken());
+        return Ok(await _authService.RefreshTokenAsync());
+    }
+    
+    [HttpPut("[action]/{id:long:min(1)}")]
+    public async Task<IActionResult> UpdateByIdAsync([FromBody] UpdateUserDTO user, long id)
+    {
+        return Accepted(await _authService.UpdateByIdAsync(user, id));
     }
 }

@@ -7,6 +7,5 @@ public interface IUserService
 {
     Task<IEnumerable<UserDTO>> GetAllAsync();
     Task<User> GetByIdAsync(long id);
-    Task<User> UpdateByIdAsync(UpdateUserDTO user, long id);
     Task DeleteByIdAsync(long id);
 }

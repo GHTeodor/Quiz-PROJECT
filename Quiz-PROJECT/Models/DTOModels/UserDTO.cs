@@ -11,7 +11,7 @@ public class UserDTO : BaseModelDTO
 
     public string? LastName { get; set; }
     
-    public string FullName => String.IsNullOrEmpty(LastName) ? FirstName : $"{FirstName} {LastName}";
+    public string FullName => string.IsNullOrEmpty(LastName) ? FirstName : $"{FirstName} {LastName}";
 
     [Required]
     public string Username { get; set; }
@@ -41,7 +41,7 @@ public class CreateUserDTO
 
     public string? LastName { get; set; }
     
-    public string FullName => String.IsNullOrEmpty(LastName)? FirstName : $"{FirstName} {LastName}";
+    public string FullName => string.IsNullOrEmpty(LastName)? FirstName : $"{FirstName} {LastName}";
 
     [Required]
     public string Username { get; set; }
@@ -77,7 +77,7 @@ public class UpdateUserDTO
 
     public string? LastName { get; set; }
     
-    public string FullName => String.IsNullOrEmpty(LastName)? FirstName : $"{FirstName} {LastName}";
+    public string FullName => string.IsNullOrEmpty(LastName)? FirstName : $"{FirstName} {LastName}";
 
     [Required]
     public string Username { get; set; }
