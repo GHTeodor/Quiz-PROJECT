@@ -12,6 +12,8 @@ public class MapperInitializer : Profile
         CreateMap<User, CreateUserDTO>().ReverseMap();
         CreateMap<User, UpdateUserDTO>().ReverseMap();
 
+        CreateMap<RefreshToken, RefreshTokenDTO>().ReverseMap();
+
         CreateMap<Question, QuestionDTO>().ReverseMap();
         CreateMap<Question, CreateQuestionDTO>().ReverseMap();
         CreateMap<Question, UpdateQuestionDTO>().ReverseMap();

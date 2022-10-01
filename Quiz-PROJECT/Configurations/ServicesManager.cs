@@ -1,6 +1,4 @@
-﻿using Quiz_PROJECT.Models;
-using Quiz_PROJECT.Models.DTOModels;
-using Quiz_PROJECT.Services;
+﻿using Quiz_PROJECT.Services;
 
 namespace Quiz_PROJECT.Configurations;
 
@@ -10,5 +8,6 @@ public static class ServicesManager
     {
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IQuestionService, QuestionService>();
+        services.AddScoped<IAuthService, AuthService>();
     }
 }

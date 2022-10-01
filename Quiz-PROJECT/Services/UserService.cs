@@ -1,7 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using AutoMapper;
-using Newtonsoft.Json;
-using Quiz_PROJECT.Errors;
+﻿using AutoMapper;
 using Quiz_PROJECT.Models;
 using Quiz_PROJECT.Models.DTOModels;
 using Quiz_PROJECT.UnitOfWork;
@@ -26,54 +23,7 @@ public class UserService : IUserService
     
     public async Task<User> GetByIdAsync(long id)
     {
-        return await _unitOfWork.Users.GetByIdAsync(id);;
-    }
-    
-    public async Task<User> CreateAsync(CreateUserDTO createdUser)
-    {
-        if (createdUser == null)
-        {
-            throw new BadRequestException("Wrong field(s)",
-                $"User's fields: {JsonConvert.SerializeObject(typeof(User).GetProperties().Select(f => f.Name))}");
-        }
-
-        User user = _mapper.Map<User>(createdUser);
-        
-        user.CreatedAt = DateTimeOffset.Now.ToLocalTime();
-        user.UpdatedAt = null;
-        user.Role = Role.USER;
-
-        await _unitOfWork.Users.CreateAsync(user);
-        await _unitOfWork.SaveAsync();
-        await _unitOfWork.DisposeAsync();
-
-        return user;
-    }
-    
-    public async Task<User> UpdateByIdAsync(UpdateUserDTO user, long id)
-    {
-        User userForUpdate = _mapper.Map(user, await GetByIdAsync(id));
-
-        // Check if user will have unique email and phone number after update
-        var userByEmail = await _unitOfWork.Users.FindByEmailAsync(userForUpdate.Email);
-        var userByPhone = await _unitOfWork.Users.FindByPhoneAsync(userForUpdate.Phone);
-        
-        if (userByEmail is not null && userByEmail.Id != id)
-            throw new BadRequestException("You can't use this email",
-                $"User with email: {userForUpdate.Email} already exist");
-        
-        if (userByPhone is not null && userByPhone.Id != id)
-            throw new BadRequestException("You can't use this phone number",
-                $"User with this phone number: {userForUpdate.Phone} already exist");
-        //
-
-        userForUpdate.UpdatedAt = DateTimeOffset.Now.ToLocalTime();
-        
-        await _unitOfWork.Users.UpdateAsync(userForUpdate);
-        await _unitOfWork.SaveAsync();
-        await _unitOfWork.DisposeAsync();
-
-        return userForUpdate;
+        return await _unitOfWork.Users.GetByIdAsync(id);
     }
 
     public async Task DeleteByIdAsync(long id)

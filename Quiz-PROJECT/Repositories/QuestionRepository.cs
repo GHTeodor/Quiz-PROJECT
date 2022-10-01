@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using Quiz_PROJECT.Errors;
 using Quiz_PROJECT.Models;
 
@@ -38,6 +37,7 @@ public class QuestionRepository : IRepository<Question>
         {
             foreach (var answer in question.IncorrectAnswers)
             {
+                answer.UpdatedAt = null;
                 await _dbContext.Answers.AddAsync(answer);
             }
         }
@@ -57,14 +57,15 @@ public class QuestionRepository : IRepository<Question>
                 var answerModel = new Answer
                 {
                     Id = answer.Id,
-                    IncorrectAnswer = answer.IncorrectAnswer
+                    IncorrectAnswer = answer.IncorrectAnswer,
+                    UpdatedAt = DateTimeOffset.Now.ToLocalTime()
                 };
                 _dbContext.Answers.Attach(answerModel);
                 _dbContext.Entry(answerModel).Property(t => t.IncorrectAnswer).IsModified = true;
             }
         }
 
-        _dbContext.Questions.Update(question);
+        await Task.FromResult(_dbContext.Questions.Update(question));
     }
 
     public async Task DeleteByIdAsync(long id)
