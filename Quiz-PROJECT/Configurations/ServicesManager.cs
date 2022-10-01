@@ -9,5 +9,6 @@ public static class ServicesManager
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IQuestionService, QuestionService>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IMailKitService, MailKitService>();
     }
 }
