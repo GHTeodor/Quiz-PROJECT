@@ -17,8 +17,7 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddAuthenticationS(
-    builder.Configuration.GetSection("AppSettings:Token").Value);
+builder.Services.AddAuthenticationS(builder.Configuration);
 
 builder.Services.AddSwagger();
 
