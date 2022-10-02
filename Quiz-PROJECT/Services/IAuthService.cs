@@ -5,9 +5,10 @@ namespace Quiz_PROJECT.Services;
 
 public interface IAuthService
 {
-    Task<User> RegisterAsync(CreateUserDTO user);
+    Task<User> RegistrationAsync(CreateUserDTO user);
     Task<string> LoginAsync(AuthLoginUserDTO user);
     Task<string> RefreshTokenAsync();
     Task<Dictionary<string, string>> GetInfoFromTokenAsync();
     Task<User> UpdateByIdAsync(UpdateUserDTO user, long id);
+    Task LogoutAsync();
 }

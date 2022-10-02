@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Quiz_PROJECT.Models.DTOModels;
 using Quiz_PROJECT.Services;
@@ -7,6 +8,7 @@ namespace Quiz_PROJECT.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[EnableCors]
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
@@ -24,21 +26,28 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("[action]")]
-    public async Task<IActionResult> RegisterAsync([FromBody] CreateUserDTO user)
+    public async Task<IActionResult> RegistrationAsync([FromBody] CreateUserDTO user)
     {
-        return Accepted(await _authService.RegisterAsync(user));
+        return Accepted(await _authService.RegistrationAsync(user));
     }
     
     [HttpPost("[action]")]
     public async Task<IActionResult> LoginAsync([FromBody] AuthLoginUserDTO user)
     {
-        return Accepted(await _authService.LoginAsync(user));
+        return Ok(await _authService.LoginAsync(user));
     }
 
     [HttpPost("[action]")]
     public async Task<ActionResult> RefreshTokenAsync()
     {
         return Ok(await _authService.RefreshTokenAsync());
+    }
+    
+    [HttpDelete("[action]")]
+    public async Task<ActionResult> LogoutAsync()
+    {
+        await _authService.LogoutAsync();
+        return Ok();
     }
     
     [HttpPut("[action]/{id:long:min(1)}")]

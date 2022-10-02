@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using AutoMapper;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using Quiz_PROJECT.Errors;
 using Quiz_PROJECT.Models;
 using Quiz_PROJECT.Models.DTOModels;
@@ -40,7 +41,7 @@ public class AuthService : IAuthService
         return await Task.FromResult(result);
     }
 
-    public async Task<User> RegisterAsync(CreateUserDTO request)
+    public async Task<User> RegistrationAsync(CreateUserDTO request)
     {
         User user = _mapper.Map<User>(request);
 
@@ -72,7 +73,7 @@ public class AuthService : IAuthService
         var refreshToken = _GenerateRefreshToken();
         await _SetRefreshToken(refreshToken, user.Id);
 
-        return _CreateToken(user);
+        return JsonConvert.SerializeObject(_CreateToken(user));
     }
 
     public async Task<string> RefreshTokenAsync()
@@ -124,6 +125,18 @@ public class AuthService : IAuthService
         await _unitOfWork.DisposeAsync();
         
         return updatedUser;
+    }
+
+    public async Task LogoutAsync()
+    {
+        long userId = long.Parse(_contextAccessor.HttpContext.Request.Cookies["userId"]!);
+
+        await _unitOfWork.RefreshTokens.DeleteByUserIdAsync(userId);
+        await _unitOfWork.SaveAsync();
+        await _unitOfWork.DisposeAsync();
+        
+        _contextAccessor.HttpContext.Response.Cookies.Delete("refreshToken");
+        _contextAccessor.HttpContext.Response.Cookies.Delete("userId");
     }
 
     // ---------------------------------------------------------------------

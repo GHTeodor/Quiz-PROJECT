@@ -9,6 +9,7 @@ public static class Cors
             policy.WithOrigins("http://localhost:4200");
             policy.AllowAnyHeader();
             policy.AllowAnyMethod();
+            policy.AllowCredentials();
         }));
     }
 }
