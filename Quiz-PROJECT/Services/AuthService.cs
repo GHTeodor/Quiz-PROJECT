@@ -41,7 +41,7 @@ public class AuthService : IAuthService
         return await Task.FromResult(result);
     }
 
-    public async Task<User> RegisterAsync(CreateUserDTO request)
+    public async Task<User> RegistrationAsync(CreateUserDTO request)
     {
         User user = _mapper.Map<User>(request);
 
