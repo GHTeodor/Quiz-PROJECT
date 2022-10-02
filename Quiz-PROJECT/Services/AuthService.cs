@@ -126,6 +126,18 @@ public class AuthService : IAuthService
         return updatedUser;
     }
 
+    public async Task LogoutAsync()
+    {
+        long userId = long.Parse(_contextAccessor.HttpContext.Request.Cookies["userId"]!);
+
+        await _unitOfWork.RefreshTokens.DeleteByUserIdAsync(userId);
+        await _unitOfWork.SaveAsync();
+        await _unitOfWork.DisposeAsync();
+        
+        _contextAccessor.HttpContext.Response.Cookies.Delete("refreshToken");
+        _contextAccessor.HttpContext.Response.Cookies.Delete("userId");
+    }
+
     // ---------------------------------------------------------------------
 
     private _RefreshToken _GenerateRefreshToken()

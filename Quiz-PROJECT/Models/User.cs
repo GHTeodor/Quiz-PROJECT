@@ -41,5 +41,5 @@ public class User : BaseModel
     [Column(TypeName = "nvarchar(24)")] 
     public Role Role { get; set; } = Role.USER;
     
-    public RefreshToken RefreshToken { get; set; }
+    public RefreshToken? RefreshToken { get; set; }
 }

@@ -41,6 +41,13 @@ public class AuthController : ControllerBase
         return Ok(await _authService.RefreshTokenAsync());
     }
     
+    [HttpPost("[action]")]
+    public async Task<ActionResult> LogoutAsync()
+    {
+        await _authService.LogoutAsync();
+        return Ok();
+    }
+    
     [HttpPut("[action]/{id:long:min(1)}")]
     public async Task<IActionResult> UpdateByIdAsync([FromBody] UpdateUserDTO user, long id)
     {
