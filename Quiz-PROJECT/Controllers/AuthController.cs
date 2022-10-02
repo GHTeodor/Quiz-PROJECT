@@ -34,7 +34,7 @@ public class AuthController : ControllerBase
     [HttpPost("[action]")]
     public async Task<IActionResult> LoginAsync([FromBody] AuthLoginUserDTO user)
     {
-        return Accepted(await _authService.LoginAsync(user));
+        return Ok(await _authService.LoginAsync(user));
     }
 
     [HttpPost("[action]")]
