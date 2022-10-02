@@ -43,7 +43,7 @@ public class AuthController : ControllerBase
         return Ok(await _authService.RefreshTokenAsync());
     }
     
-    [HttpPost("[action]")]
+    [HttpDelete("[action]")]
     public async Task<ActionResult> LogoutAsync()
     {
         await _authService.LogoutAsync();
