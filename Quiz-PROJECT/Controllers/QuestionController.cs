@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Quiz_PROJECT.Models.DTOModels;
@@ -9,7 +10,7 @@ namespace Quiz_PROJECT.Controllers;
 [ApiController]
 [Route("[controller]")]
 [EnableCors]
-[Authorize]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class QuestionController : ControllerBase
 {
     private readonly IQuestionService _questionService;
