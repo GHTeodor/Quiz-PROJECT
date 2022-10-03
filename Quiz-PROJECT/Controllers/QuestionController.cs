@@ -26,7 +26,6 @@ public class QuestionController : ControllerBase
     }
     
     [HttpGet("{id:long:min(1)}")]
-    [Authorize(Roles = "USER")]
     public async Task<IActionResult> GetByIdAsync(long id)
     {
         return Ok(await _questionService.GetByIdAsync(id));

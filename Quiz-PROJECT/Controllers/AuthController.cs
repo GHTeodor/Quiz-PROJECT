@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Quiz_PROJECT.Models;
 using Quiz_PROJECT.Models.DTOModels;
 using Quiz_PROJECT.Services;
 
@@ -17,7 +20,13 @@ public class AuthController : ControllerBase
     {
         _authService = authService;
     }
-    
+
+    [HttpGet]
+    public async Task<IActionResult> GetAllAsync()
+    {
+        return Ok(await _authService.GetAllAsync());
+    }
+
     [HttpGet("[action]")]
     [Authorize]
     public async Task<IActionResult> GetAsync()

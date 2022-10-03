@@ -1,18 +1,22 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 using Quiz_PROJECT.Models.Validators;
 
 namespace Quiz_PROJECT.Models;
 
-public class User : BaseModel
+public class User : IdentityUser<long>
 {
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.Now.ToLocalTime();
+    public DateTimeOffset? UpdatedAt { get; set; }
+    
     [Required]
     public string FirstName { get; set; }
 
     public string? LastName { get; set; }
 
-    [Required]
-    public string Username { get; set; }
+    // [Required]
+    // public string Username { get; set; }
 
     [Required]
     [EmailAddress(ErrorMessage = "Invalid email")]

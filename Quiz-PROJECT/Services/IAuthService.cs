@@ -11,4 +11,5 @@ public interface IAuthService
     Task<Dictionary<string, string>> GetInfoFromTokenAsync();
     Task<User> UpdateByIdAsync(UpdateUserDTO user, long id);
     Task LogoutAsync();
+    Task<List<User>> GetAllAsync();
 }

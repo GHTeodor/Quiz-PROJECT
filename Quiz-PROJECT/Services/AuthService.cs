@@ -2,6 +2,8 @@
 using System.Security.Claims;
 using System.Security.Cryptography;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Quiz_PROJECT.Errors;
@@ -17,13 +19,20 @@ public class AuthService : IAuthService
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IHttpContextAccessor _contextAccessor;
+    private readonly UserManager<User> _userManager;
 
-    public AuthService(IConfiguration configuration, DBContext dbContext, IMapper mapper, IHttpContextAccessor contextAccessor)
+    public AuthService(IConfiguration configuration, DBContext dbContext, IMapper mapper, IHttpContextAccessor contextAccessor, UserManager<User> userManager)
     {
         _configuration = configuration;
         _mapper = mapper;
         _contextAccessor = contextAccessor;
+        _userManager = userManager;
         _unitOfWork = new UnitOfWork.UnitOfWork(dbContext);
+    }
+
+    public async Task<List<User>> GetAllAsync()
+    {
+        return await _userManager.Users.ToListAsync();
     }
 
     public async Task<Dictionary<string, string>> GetInfoFromTokenAsync()
@@ -73,7 +82,8 @@ public class AuthService : IAuthService
         var refreshToken = _GenerateRefreshToken();
         await _SetRefreshToken(refreshToken, user.Id);
 
-        return JsonConvert.SerializeObject(_CreateToken(user));
+        // return JsonConvert.SerializeObject(_CreateToken(user));
+        return _CreateToken(user);
     }
 
     public async Task<string> RefreshTokenAsync()
@@ -193,7 +203,7 @@ public class AuthService : IAuthService
     {
         List<Claim> claims = new List<Claim>
         {
-            new Claim(ClaimTypes.Name, user.Username),
+            new Claim(ClaimTypes.Name, user.UserName),
             new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.MobilePhone, user.Phone),
             new Claim(ClaimTypes.Role, user.Role.ToString())
