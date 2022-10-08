@@ -5,9 +5,9 @@ namespace Quiz_PROJECT.Services;
 
 public interface IQuestionService
 {
-    Task<IEnumerable<QuestionDTO>> GetAllAsync();
-    Task<Question> GetByIdAsync(long id);
-    Task<Question> CreateAsync(CreateQuestionDTO question);
-    Task<Question> UpdateByIdAsync(UpdateQuestionDTO person, long id);
-    Task DeleteByIdAsync(long id);
+    Task<IEnumerable<QuestionDTO>> GetAllAsync(CancellationToken token = default);
+    Task<Question> GetByIdAsync(long id, CancellationToken token = default);
+    Task<Question> CreateAsync(CreateQuestionDTO question, CancellationToken token = default);
+    Task<Question> UpdateByIdAsync(UpdateQuestionDTO person, long id, CancellationToken token = default);
+    Task DeleteByIdAsync(long id, CancellationToken token = default);
 }

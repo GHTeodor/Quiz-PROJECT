@@ -4,6 +4,6 @@ namespace Quiz_PROJECT.Repositories;
 
 public interface IUserRepository : IRepository<User>
 {
-    Task<User> FindByEmailAsync(string email);
-    Task<User> FindByPhoneAsync(string phone);
+    Task<User> FindByEmailAsync(string email, CancellationToken token = default);
+    Task<User> FindByPhoneAsync(string phone, CancellationToken token = default);
 }

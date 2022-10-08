@@ -16,46 +16,46 @@ public class QuestionService : IQuestionService
         _unitOfWork = new UnitOfWork.UnitOfWork(dbContext);
     }
 
-    public async Task<IEnumerable<QuestionDTO>> GetAllAsync()
+    public async Task<IEnumerable<QuestionDTO>> GetAllAsync(CancellationToken token = default)
     {
-        return _mapper.Map<IEnumerable<QuestionDTO>>(await _unitOfWork.Questions.GetAllAsync());
+        return _mapper.Map<IEnumerable<QuestionDTO>>(await _unitOfWork.Questions.GetAllAsync(token));
     }
 
-    public async Task<Question> GetByIdAsync(long id)
+    public async Task<Question> GetByIdAsync(long id, CancellationToken token = default)
     {
-        return await _unitOfWork.Questions.GetByIdAsync(id);
+        return await _unitOfWork.Questions.GetByIdAsync(id, token);
     }
 
-    public async Task<Question> CreateAsync(CreateQuestionDTO createAnswer)
+    public async Task<Question> CreateAsync(CreateQuestionDTO createAnswer, CancellationToken token = default)
     {
         Question question = _mapper.Map<Question>(createAnswer);
 
         question.UpdatedAt = null;
         
-        await _unitOfWork.Questions.CreateAsync(question); 
-        await _unitOfWork.SaveAsync();
+        await _unitOfWork.Questions.CreateAsync(question, token); 
+        await _unitOfWork.SaveAsync(token);
         await _unitOfWork.DisposeAsync();
 
         return question;
     }
     
-    public async Task<Question> UpdateByIdAsync(UpdateQuestionDTO question, long id)
+    public async Task<Question> UpdateByIdAsync(UpdateQuestionDTO question, long id, CancellationToken token = default)
     {
-        Question questionForUpdate = _mapper.Map(question, await GetByIdAsync(id));
+        Question questionForUpdate = _mapper.Map(question, await GetByIdAsync(id, token));
 
         questionForUpdate.UpdatedAt = DateTimeOffset.Now.ToLocalTime();
         
         await _unitOfWork.Questions.UpdateAsync(questionForUpdate);
-        await _unitOfWork.SaveAsync();
+        await _unitOfWork.SaveAsync(token);
         await _unitOfWork.DisposeAsync();
 
         return questionForUpdate;
     }
 
-    public async Task DeleteByIdAsync(long id)
+    public async Task DeleteByIdAsync(long id, CancellationToken token = default)
     {
-        await _unitOfWork.Questions.DeleteByIdAsync(id);
-        await _unitOfWork.SaveAsync();
+        await _unitOfWork.Questions.DeleteByIdAsync(id, token);
+        await _unitOfWork.SaveAsync(token);
         await _unitOfWork.DisposeAsync();
     }
 }

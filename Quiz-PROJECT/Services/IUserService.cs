@@ -5,7 +5,7 @@ namespace Quiz_PROJECT.Services;
 
 public interface IUserService
 {
-    Task<IEnumerable<UserDTO>> GetAllAsync();
-    Task<User> GetByIdAsync(long id);
-    Task DeleteByIdAsync(long id);
+    Task<IEnumerable<UserDTO>> GetAllAsync(CancellationToken token = default);
+    Task<User> GetByIdAsync(long id, CancellationToken token = default);
+    Task DeleteByIdAsync(long id, CancellationToken token = default);
 }

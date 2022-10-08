@@ -12,14 +12,14 @@ public class RefreshTokenRepository: IRefreshTokenRepository
         _dbContext = dbContext;
     }
     
-    public async Task<RefreshToken?> GetByUserIdAsync(long userId)
+    public async Task<RefreshToken?> GetByUserIdAsync(long userId, CancellationToken token = default)
     {
-        return await _dbContext.RefreshTokens.SingleOrDefaultAsync(rt => rt.UserId == userId);
+        return await _dbContext.RefreshTokens.SingleOrDefaultAsync(rt => rt.UserId == userId, token);
     }
     
-    public async Task CreateAsync(RefreshToken refreshToken)
+    public async Task CreateAsync(RefreshToken refreshToken, CancellationToken token = default)
     {
-        await _dbContext.RefreshTokens.AddAsync(refreshToken);
+        await _dbContext.RefreshTokens.AddAsync(refreshToken, token);
     }
     
     public async Task UpdateAsync(RefreshToken refreshToken)
@@ -27,8 +27,8 @@ public class RefreshTokenRepository: IRefreshTokenRepository
         await Task.FromResult(_dbContext.RefreshTokens.Update(refreshToken));
     }
 
-    public async Task DeleteByUserIdAsync(long userId)
+    public async Task DeleteByUserIdAsync(long userId, CancellationToken token = default)
     {
-        _dbContext.RefreshTokens.Remove(await GetByUserIdAsync(userId));
+        _dbContext.RefreshTokens.Remove(await GetByUserIdAsync(userId, token));
     }
 }

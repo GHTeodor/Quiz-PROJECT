@@ -17,21 +17,21 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllAsync()
+    public async Task<IActionResult> GetAllAsync(CancellationToken token = default)
     {
-        return Ok(await _userService.GetAllAsync());
+        return Ok(await _userService.GetAllAsync(token));
     }
     
     [HttpGet("{id:long:min(1)}")]
-    public async Task<IActionResult> GetByIdAsync(long id)
+    public async Task<IActionResult> GetByIdAsync(long id, CancellationToken token = default)
     {
-        return Ok(await _userService.GetByIdAsync(id));
+        return Ok(await _userService.GetByIdAsync(id, token));
     }
 
     [HttpDelete("{id:long:min(1)}")]
-    public async Task<IActionResult> DeleteByIdAsync(long id)
+    public async Task<IActionResult> DeleteByIdAsync(long id, CancellationToken token = default)
     {
-        await _userService.DeleteByIdAsync(id);
+        await _userService.DeleteByIdAsync(id, token);
         return Ok(id);
     }
 }

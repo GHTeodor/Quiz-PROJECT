@@ -21,33 +21,33 @@ public class QuestionController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllAsync()
+    public async Task<IActionResult> GetAllAsync(CancellationToken token = default)
     {
-        return Ok(await _questionService.GetAllAsync());
+        return Ok(await _questionService.GetAllAsync(token));
     }
     
     [HttpGet("{id:long:min(1)}")]
-    public async Task<IActionResult> GetByIdAsync(long id)
+    public async Task<IActionResult> GetByIdAsync(long id, CancellationToken token = default)
     {
-        return Ok(await _questionService.GetByIdAsync(id));
+        return Ok(await _questionService.GetByIdAsync(id, token));
     }
 
     [HttpPost]
-    public async Task<IActionResult> PostCreateAsync([FromBody] CreateQuestionDTO question)
+    public async Task<IActionResult> PostCreateAsync([FromBody] CreateQuestionDTO question, CancellationToken token = default)
     {
-        return Accepted(await _questionService.CreateAsync(question));
+        return Accepted(await _questionService.CreateAsync(question, token));
     }
     
     [HttpPut("{id:long:min(1)}")]
-    public async Task<IActionResult> PutUpdateByIdAsync([FromBody] UpdateQuestionDTO question, long id)
+    public async Task<IActionResult> PutUpdateByIdAsync([FromBody] UpdateQuestionDTO question, long id, CancellationToken token = default)
     {
-        return Ok(await _questionService.UpdateByIdAsync(question, id));
+        return Ok(await _questionService.UpdateByIdAsync(question, id, token));
     }
     
     [HttpDelete("{id:long:min(1)}")]
-    public async Task<IActionResult> DeleteByIdAsync(long id)
+    public async Task<IActionResult> DeleteByIdAsync(long id, CancellationToken token = default)
     {
-        await _questionService.DeleteByIdAsync(id);
+        await _questionService.DeleteByIdAsync(id, token);
         return Ok(id);
     }
 }

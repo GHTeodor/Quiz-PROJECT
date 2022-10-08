@@ -4,5 +4,5 @@ namespace Quiz_PROJECT.Services;
 
 public interface IMailKitService
 {
-    Task<string> SendMail(SendMailDTO mail);
+    Task<string> SendMail(SendMailDTO mail, CancellationToken token = default);
 }
