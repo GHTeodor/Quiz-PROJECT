@@ -13,15 +13,15 @@ public class QuestionRepository : IRepository<Question>
         _dbContext = dbContext;
     }
     
-    public async Task<IEnumerable<Question>> GetAllAsync()
+    public async Task<IEnumerable<Question>> GetAllAsync(CancellationToken token = default)
     {
-        return await _dbContext.Questions.Include(a => a.IncorrectAnswers).ToListAsync();
+        return await _dbContext.Questions.Include(a => a.IncorrectAnswers).ToListAsync(token);
     }
 
-    public async Task<Question> GetByIdAsync(long id)
+    public async Task<Question> GetByIdAsync(long id, CancellationToken token = default)
     {
         var question = await _dbContext.Questions.Include(a => a.IncorrectAnswers)
-            .SingleOrDefaultAsync(q => q.Id == id);
+            .SingleOrDefaultAsync(q => q.Id == id, token);
 
         if (question is null)
             throw new NotFoundException("Question not exist", $"There is no question with Id: {id}");
@@ -29,16 +29,16 @@ public class QuestionRepository : IRepository<Question>
         return question;
     }
 
-    public async Task CreateAsync(Question question)
+    public async Task CreateAsync(Question question, CancellationToken token = default)
     {
-        await _dbContext.Questions.AddAsync(question);
+        await _dbContext.Questions.AddAsync(question, token);
 
         if (question.IncorrectAnswers.Any())
         {
             foreach (var answer in question.IncorrectAnswers)
             {
                 answer.UpdatedAt = null;
-                await _dbContext.Answers.AddAsync(answer);
+                await _dbContext.Answers.AddAsync(answer, token);
             }
         }
     }
@@ -68,8 +68,8 @@ public class QuestionRepository : IRepository<Question>
         await Task.FromResult(_dbContext.Questions.Update(question));
     }
 
-    public async Task DeleteByIdAsync(long id)
+    public async Task DeleteByIdAsync(long id, CancellationToken token = default)
     {
-        _dbContext.Questions.Remove(await GetByIdAsync(id));
+        _dbContext.Questions.Remove(await GetByIdAsync(id, token));
     }
 }

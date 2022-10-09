@@ -14,7 +14,7 @@ public class UserDTO : BaseModelDTO
     public string FullName => string.IsNullOrEmpty(LastName) ? FirstName : $"{FirstName} {LastName}";
 
     [Required]
-    public string Username { get; set; }
+    public string UserName { get; set; }
 
     [Required]
     [EmailAddress(ErrorMessage = "Invalid email")]
@@ -44,7 +44,7 @@ public class CreateUserDTO
     public string FullName => string.IsNullOrEmpty(LastName)? FirstName : $"{FirstName} {LastName}";
 
     [Required]
-    public string Username { get; set; }
+    public string UserName { get; set; }
 
     [Required]
     [EmailAddress(ErrorMessage = "Invalid email")]
@@ -80,7 +80,7 @@ public class UpdateUserDTO
     public string FullName => string.IsNullOrEmpty(LastName)? FirstName : $"{FirstName} {LastName}";
 
     [Required]
-    public string Username { get; set; }
+    public string UserName { get; set; }
 
     [Required]
     [EmailAddress(ErrorMessage = "Invalid email")]

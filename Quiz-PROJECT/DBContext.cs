@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Quiz_PROJECT.Models;
 
 namespace Quiz_PROJECT;
 
-public class DBContext : DbContext
+public class DBContext : IdentityDbContext<User, ApplicationRole, long>
 {
     public DBContext(DbContextOptions<DBContext> options) : base(options) { }
 
@@ -17,7 +18,7 @@ public class DBContext : DbContext
         base.OnModelCreating(modelBuilder);
     }
 
-    public DbSet<User> Users { get; set; }
+    // public DbSet<User> Users { get; set; }
     public DbSet<Question> Questions { get; set; }
     public DbSet<Answer> Answers { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }

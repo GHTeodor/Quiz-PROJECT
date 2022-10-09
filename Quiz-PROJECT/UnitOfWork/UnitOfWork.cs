@@ -20,9 +20,9 @@ public class UnitOfWork : IUnitOfWork
     public IRepository<Question> Questions { get; }
     public IRefreshTokenRepository RefreshTokens { get; }
 
-    public async Task SaveAsync()
+    public async Task SaveAsync(CancellationToken token = default)
     {
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync(token);
     }
 
     private Utf8JsonWriter? _jsonWriter = new(new MemoryStream());

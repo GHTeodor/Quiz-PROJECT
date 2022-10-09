@@ -16,7 +16,7 @@ public class MailKitService : IMailKitService
         _config = configuration;
     }
 
-    public async Task<string> SendMail(SendMailDTO request)
+    public async Task<string> SendMail(SendMailDTO request, CancellationToken token = default)
     {
         string mailFrom = _config.GetSection("EmailUsername").Value;
 
@@ -27,12 +27,12 @@ public class MailKitService : IMailKitService
         email.Body = new TextPart(TextFormat.Html) { Text = request.Body };
 
         using var smpt = new SmtpClient();
-        await smpt.ConnectAsync(_config.GetSection("EmailHost").Value, 587, SecureSocketOptions.StartTls);
-        await smpt.AuthenticateAsync(mailFrom, _config.GetSection("EmailPassword").Value);
+        await smpt.ConnectAsync(_config.GetSection("EmailHost").Value, 587, SecureSocketOptions.StartTls, token);
+        await smpt.AuthenticateAsync(mailFrom, _config.GetSection("EmailPassword").Value, token);
         smpt.Timeout = 5000;
         
-        await smpt.SendAsync(email);
-        await smpt.DisconnectAsync(true);
+        await smpt.SendAsync(email, token);
+        await smpt.DisconnectAsync(true, token);
         
         return $"Mail \n from: [{mailFrom}] \n to: [{request.To}] \nhas been sent successfully";
     }

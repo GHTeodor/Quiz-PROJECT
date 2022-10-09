@@ -18,8 +18,8 @@ public class MailKitController: ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> SendEmailAsync(SendMailDTO mail)
+    public async Task<IActionResult> SendEmailAsync(SendMailDTO mail, CancellationToken token = default)
     {
-        return Ok(await _mailKitService.SendMail(mail));
+        return Ok(await _mailKitService.SendMail(mail, token));
     }
 }

@@ -5,10 +5,11 @@ namespace Quiz_PROJECT.Services;
 
 public interface IAuthService
 {
-    Task<User> RegistrationAsync(CreateUserDTO user);
-    Task<string> LoginAsync(AuthLoginUserDTO user);
-    Task<string> RefreshTokenAsync();
-    Task<Dictionary<string, string>> GetInfoFromTokenAsync();
-    Task<User> UpdateByIdAsync(UpdateUserDTO user, long id);
-    Task LogoutAsync();
+    Task<User> RegistrationAsync(CreateUserDTO user, CancellationToken token = default);
+    Task<string> LoginAsync(AuthLoginUserDTO user, CancellationToken token = default);
+    Task<string> RefreshTokenAsync(CancellationToken token = default);
+    Task<Dictionary<string, string>> GetInfoFromTokenAsync(CancellationToken token = default);
+    Task<User> UpdateByIdAsync(UpdateUserDTO user, long id, CancellationToken token = default);
+    Task LogoutAsync(CancellationToken token = default);
+    Task<List<User>> GetAllAsync(CancellationToken token = default);
 }

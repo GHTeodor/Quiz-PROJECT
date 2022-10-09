@@ -1,8 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Quiz_PROJECT;
 using Quiz_PROJECT.Configurations;
 using Quiz_PROJECT.Errors;
+using Quiz_PROJECT.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,14 +20,18 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddAuthenticationS(builder.Configuration);
-
 builder.Services.AddSwagger();
 
 builder.Services.AddAutoMapper(typeof(MapperInitializer));
 
 builder.Services.AddDbContext<DBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MyDBConnection")));
+
+builder.Services.AddIdentity<User, ApplicationRole>()
+    .AddEntityFrameworkStores<DBContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.AddAuthenticationS(builder.Configuration);
 
 builder.Services.AddServices();
 builder.Services.AddRepositories();
@@ -37,6 +44,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+SeedDatabase.Initialize(app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope().ServiceProvider);
 
 app.UseMiddleware<ExceptionHandler>();
 

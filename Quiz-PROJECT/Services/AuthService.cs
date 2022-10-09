@@ -2,6 +2,8 @@
 using System.Security.Claims;
 using System.Security.Cryptography;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Quiz_PROJECT.Errors;
@@ -17,16 +19,23 @@ public class AuthService : IAuthService
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IHttpContextAccessor _contextAccessor;
+    private readonly UserManager<User> _userManager;
 
-    public AuthService(IConfiguration configuration, DBContext dbContext, IMapper mapper, IHttpContextAccessor contextAccessor)
+    public AuthService(IConfiguration configuration, DBContext dbContext, IMapper mapper, IHttpContextAccessor contextAccessor, UserManager<User> userManager)
     {
         _configuration = configuration;
         _mapper = mapper;
         _contextAccessor = contextAccessor;
+        _userManager = userManager;
         _unitOfWork = new UnitOfWork.UnitOfWork(dbContext);
     }
 
-    public async Task<Dictionary<string, string>> GetInfoFromTokenAsync()
+    public async Task<List<User>> GetAllAsync(CancellationToken token = default)
+    {
+        return await _userManager.Users.ToListAsync(token);
+    }
+
+    public async Task<Dictionary<string, string>> GetInfoFromTokenAsync(CancellationToken token = default)
     {
         Dictionary<string, string> result = new Dictionary<string, string>();
         
@@ -37,11 +46,10 @@ public class AuthService : IAuthService
             result.Add("MobilePhone", _contextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.MobilePhone));
             result.Add("Role", _contextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Role));
         }
-
         return await Task.FromResult(result);
     }
 
-    public async Task<User> RegistrationAsync(CreateUserDTO request)
+    public async Task<User> RegistrationAsync(CreateUserDTO request, CancellationToken token = default)
     {
         User user = _mapper.Map<User>(request);
 
@@ -53,16 +61,16 @@ public class AuthService : IAuthService
         user.UpdatedAt = null;
         user.Role = Role.USER;
         
-        await _unitOfWork.Users.CreateAsync(user);
-        await _unitOfWork.SaveAsync();
+        await _unitOfWork.Users.CreateAsync(user, token);
+        await _unitOfWork.SaveAsync(token);
         await _unitOfWork.DisposeAsync();
-        
+
         return user;
     }
 
-    public async Task<string> LoginAsync(AuthLoginUserDTO request)
+    public async Task<string> LoginAsync(AuthLoginUserDTO request, CancellationToken token = default)
     {
-        User user = await _unitOfWork.Users.FindByEmailAsync(request.Email);
+        User user = await _unitOfWork.Users.FindByEmailAsync(request.Email, token);
         
         if (user is null)
             throw new BadRequestException("User not found", $"No user with this email {user.Email}");
@@ -71,17 +79,17 @@ public class AuthService : IAuthService
             throw new BadRequestException("Wrong email or password", $"No user with this email: {user.Email} or password");
 
         var refreshToken = _GenerateRefreshToken();
-        await _SetRefreshToken(refreshToken, user.Id);
+        await _SetRefreshToken(refreshToken, user.Id, token);
 
         return JsonConvert.SerializeObject(_CreateToken(user));
     }
 
-    public async Task<string> RefreshTokenAsync()
+    public async Task<string> RefreshTokenAsync(CancellationToken cancellationToken = default)
     {
         var refreshToken = _contextAccessor.HttpContext.Request.Cookies["refreshToken"];
         long userId = long.Parse(_contextAccessor.HttpContext.Request.Cookies["userId"]!);
         
-        User user = await _unitOfWork.Users.GetByIdAsync(userId);
+        User user = await _unitOfWork.Users.GetByIdAsync(userId, cancellationToken);
     
         if (!user.RefreshToken.Token.Equals(refreshToken))
             throw new UnauthorizedException("Invalid Refresh Token", "re-login");
@@ -91,12 +99,12 @@ public class AuthService : IAuthService
     
         string token = _CreateToken(user);
         var newRefreshToken = _GenerateRefreshToken();
-        await _SetRefreshToken(newRefreshToken, user.Id);
+        await _SetRefreshToken(newRefreshToken, user.Id, cancellationToken);
         
         return await Task.FromResult(token);
     }
 
-    public async Task<User> UpdateByIdAsync(UpdateUserDTO user, long id)
+    public async Task<User> UpdateByIdAsync(UpdateUserDTO user, long id, CancellationToken token = default)
     {
         User updatedUser = _mapper.Map(user, await _unitOfWork.Users.GetByIdAsync(id));
         
@@ -106,8 +114,8 @@ public class AuthService : IAuthService
         updatedUser.PasswordSalt = passwordSalt;
         
         // Check if user will have unique email and phone number after update
-        var userByEmail = await _unitOfWork.Users.FindByEmailAsync(updatedUser.Email);
-        var userByPhone = await _unitOfWork.Users.FindByPhoneAsync(updatedUser.Phone);
+        var userByEmail = await _unitOfWork.Users.FindByEmailAsync(updatedUser.Email, token);
+        var userByPhone = await _unitOfWork.Users.FindByPhoneAsync(updatedUser.Phone, token);
         
         if (userByEmail is not null && userByEmail.Id != id)
             throw new BadRequestException("You can't use this email",
@@ -121,18 +129,18 @@ public class AuthService : IAuthService
         updatedUser.UpdatedAt = DateTimeOffset.Now.ToLocalTime();
         
         await _unitOfWork.Users.UpdateAsync(updatedUser);
-        await _unitOfWork.SaveAsync();
+        await _unitOfWork.SaveAsync(token);
         await _unitOfWork.DisposeAsync();
         
         return updatedUser;
     }
 
-    public async Task LogoutAsync()
+    public async Task LogoutAsync(CancellationToken token = default)
     {
         long userId = long.Parse(_contextAccessor.HttpContext.Request.Cookies["userId"]!);
 
-        await _unitOfWork.RefreshTokens.DeleteByUserIdAsync(userId);
-        await _unitOfWork.SaveAsync();
+        await _unitOfWork.RefreshTokens.DeleteByUserIdAsync(userId, token);
+        await _unitOfWork.SaveAsync(token);
         await _unitOfWork.DisposeAsync();
         
         _contextAccessor.HttpContext.Response.Cookies.Delete("refreshToken");
@@ -152,7 +160,7 @@ public class AuthService : IAuthService
         return refreshToken;
     }
 
-    private async Task _SetRefreshToken(_RefreshToken newRefreshToken, long userId)
+    private async Task _SetRefreshToken(_RefreshToken newRefreshToken, long userId, CancellationToken token = default)
     {
         CookieOptions cookieOptions = new CookieOptions
         {
@@ -163,7 +171,7 @@ public class AuthService : IAuthService
         _contextAccessor.HttpContext.Response.Cookies.Append("refreshToken", newRefreshToken.Token, cookieOptions);
         _contextAccessor.HttpContext.Response.Cookies.Append("userId", userId.ToString(), cookieOptions);
         
-        var rT = await _unitOfWork.RefreshTokens.GetByUserIdAsync(userId);
+        var rT = await _unitOfWork.RefreshTokens.GetByUserIdAsync(userId, token);
         if (rT is null)
         {
             RefreshToken refreshToken = new RefreshToken
@@ -174,7 +182,7 @@ public class AuthService : IAuthService
                 Expires = newRefreshToken.Expires,
                 UserId = userId
             };
-            await _unitOfWork.RefreshTokens.CreateAsync(refreshToken);
+            await _unitOfWork.RefreshTokens.CreateAsync(refreshToken, token);
         }
         else
         {
@@ -185,7 +193,7 @@ public class AuthService : IAuthService
             await _unitOfWork.RefreshTokens.UpdateAsync(rT);
         }
 
-        await _unitOfWork.SaveAsync();
+        await _unitOfWork.SaveAsync(token);
         await _unitOfWork.DisposeAsync();
     }
     
@@ -193,7 +201,7 @@ public class AuthService : IAuthService
     {
         List<Claim> claims = new List<Claim>
         {
-            new Claim(ClaimTypes.Name, user.Username),
+            new Claim(ClaimTypes.Name, user.UserName),
             new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.MobilePhone, user.Phone),
             new Claim(ClaimTypes.Role, user.Role.ToString())

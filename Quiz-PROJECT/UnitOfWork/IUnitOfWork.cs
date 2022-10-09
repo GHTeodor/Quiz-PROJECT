@@ -8,5 +8,5 @@ public interface IUnitOfWork : IAsyncDisposable, IDisposable
     IUserRepository Users { get; }
     IRepository<Question> Questions { get; }
     IRefreshTokenRepository RefreshTokens { get; }
-    Task SaveAsync();
+    Task SaveAsync(CancellationToken token = default);
 }
