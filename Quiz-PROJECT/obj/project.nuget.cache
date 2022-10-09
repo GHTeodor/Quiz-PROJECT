@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "LDz/QSr1iQ9VE8nl07WPrwkv1qKpe2UPLRHyoq/R+HqCLfpBYfujJdq7EfdOKlX0YMavNuOta0CI7y3C6yOREw==",
+  "dgSpecHash": "DlLmHWhP1PEXacOJfvgu6pF7CqLYatx2o/M1PS8i0rBE2m/gHHqHeLu+qizAt1IaH8kOXubS1aT2mocrnYdU/g==",
   "success": true,
   "projectFilePath": "D:\\Exoft\\Quiz-PROJECT\\Quiz-PROJECT\\Quiz-PROJECT.csproj",
   "expectedPackageFiles": [
@@ -8,6 +8,7 @@
     "C:\\Users\\Teodo\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.0\\automapper.extensions.microsoft.dependencyinjection.12.0.0.nupkg.sha512",
     "C:\\Users\\Teodo\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\Teodo\\.nuget\\packages\\mailkit\\3.4.1\\mailkit.3.4.1.nupkg.sha512",
+    "C:\\Users\\Teodo\\.nuget\\packages\\microsoft.aspnetcore.authentication.google\\6.0.9\\microsoft.aspnetcore.authentication.google.6.0.9.nupkg.sha512",
     "C:\\Users\\Teodo\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\6.0.9\\microsoft.aspnetcore.authentication.jwtbearer.6.0.9.nupkg.sha512",
     "C:\\Users\\Teodo\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\6.0.9\\microsoft.aspnetcore.cryptography.internal.6.0.9.nupkg.sha512",
     "C:\\Users\\Teodo\\.nuget\\packages\\microsoft.aspnetcore.cryptography.keyderivation\\6.0.9\\microsoft.aspnetcore.cryptography.keyderivation.6.0.9.nupkg.sha512",

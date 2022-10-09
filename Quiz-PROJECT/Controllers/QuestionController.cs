@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +12,7 @@ namespace Quiz_PROJECT.Controllers;
 [Route("[controller]")]
 [EnableCors]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+[Authorize(AuthenticationSchemes = GoogleDefaults.AuthenticationScheme)]
 public class QuestionController : ControllerBase
 {
     private readonly IQuestionService _questionService;
