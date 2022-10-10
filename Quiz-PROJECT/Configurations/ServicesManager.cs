@@ -1,4 +1,6 @@
-﻿using Quiz_PROJECT.Services;
+﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Quiz_PROJECT.Services;
 
 namespace Quiz_PROJECT.Configurations;
 
@@ -10,5 +12,7 @@ public static class ServicesManager
         services.AddScoped<IQuestionService, QuestionService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IMailKitService, MailKitService>();
+        
+        services.TryAdd(ServiceDescriptor.Singleton<IMemoryCache, MemoryCache>());
     }
 }

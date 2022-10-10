@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Quiz_PROJECT.Errors;
@@ -20,13 +21,15 @@ public class AuthService : IAuthService
     private readonly IUnitOfWork _unitOfWork;
     private readonly IHttpContextAccessor _contextAccessor;
     private readonly UserManager<User> _userManager;
+    private readonly IMemoryCache _cache;
 
-    public AuthService(IConfiguration configuration, DBContext dbContext, IMapper mapper, IHttpContextAccessor contextAccessor, UserManager<User> userManager)
+    public AuthService(IConfiguration configuration, DBContext dbContext, IMapper mapper, IHttpContextAccessor contextAccessor, UserManager<User> userManager, IMemoryCache memoryCache)
     {
         _configuration = configuration;
         _mapper = mapper;
         _contextAccessor = contextAccessor;
         _userManager = userManager;
+        _cache = memoryCache;
         _unitOfWork = new UnitOfWork.UnitOfWork(dbContext);
     }
 
@@ -78,30 +81,30 @@ public class AuthService : IAuthService
         if (!_VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
             throw new BadRequestException("Wrong email or password", $"No user with this email: {user.Email} or password");
 
-        var refreshToken = _GenerateRefreshToken();
-        await _SetRefreshToken(refreshToken, user.Id, token);
+        var refreshToken = _GenerateRefreshToken(user.Id);
+        await _SetRefreshToken(refreshToken, token);
 
         return JsonConvert.SerializeObject(_CreateToken(user));
     }
 
     public async Task<string> RefreshTokenAsync(CancellationToken cancellationToken = default)
     {
-        var refreshToken = _contextAccessor.HttpContext.Request.Cookies["refreshToken"];
-        long userId = long.Parse(_contextAccessor.HttpContext.Request.Cookies["userId"]!);
-        
-        User user = await _unitOfWork.Users.GetByIdAsync(userId, cancellationToken);
+        RefreshTokenDTO refreshToken;
+        _cache.TryGetValue("refreshToken", out refreshToken);
+
+        User user = await _unitOfWork.Users.GetByIdAsync(refreshToken.UserId, cancellationToken);
     
-        if (!user.RefreshToken.Token.Equals(refreshToken))
+        if (!user.RefreshToken.Token.Equals(refreshToken.Token))
             throw new UnauthorizedException("Invalid Refresh Token", "re-login");
         
         if (user.RefreshToken.Expires <= DateTimeOffset.Now.ToLocalTime())
             throw new UnauthorizedException("Token expired", "re-login");
     
         string token = _CreateToken(user);
-        var newRefreshToken = _GenerateRefreshToken();
-        await _SetRefreshToken(newRefreshToken, user.Id, cancellationToken);
+        var newRefreshToken = _GenerateRefreshToken(user.Id);
+        await _SetRefreshToken(newRefreshToken, cancellationToken);
         
-        return await Task.FromResult(token);
+        return await Task.FromResult(JsonConvert.SerializeObject(token));
     }
 
     public async Task<User> UpdateByIdAsync(UpdateUserDTO user, long id, CancellationToken token = default)
@@ -137,41 +140,36 @@ public class AuthService : IAuthService
 
     public async Task LogoutAsync(CancellationToken token = default)
     {
-        long userId = long.Parse(_contextAccessor.HttpContext.Request.Cookies["userId"]!);
-
-        await _unitOfWork.RefreshTokens.DeleteByUserIdAsync(userId, token);
+        RefreshTokenDTO refreshToken;
+        _cache.TryGetValue("refreshToken", out refreshToken);
+        
+        await _unitOfWork.RefreshTokens.DeleteByUserIdAsync(refreshToken.UserId, token);
         await _unitOfWork.SaveAsync(token);
         await _unitOfWork.DisposeAsync();
         
-        _contextAccessor.HttpContext.Response.Cookies.Delete("refreshToken");
-        _contextAccessor.HttpContext.Response.Cookies.Delete("userId");
+        _cache.Dispose();
     }
 
     // ---------------------------------------------------------------------
 
-    private _RefreshToken _GenerateRefreshToken()
+    private RefreshTokenDTO _GenerateRefreshToken(long userId)
     {
-        var refreshToken = new _RefreshToken
+        var refreshToken = new RefreshTokenDTO
         {
             Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
             Expires = DateTimeOffset.Now.AddDays(7),
+            CreatedAt = DateTimeOffset.Now.ToLocalTime(),
+            UserId = userId
         };
 
         return refreshToken;
     }
 
-    private async Task _SetRefreshToken(_RefreshToken newRefreshToken, long userId, CancellationToken token = default)
+    private async Task _SetRefreshToken(RefreshTokenDTO newRefreshToken, CancellationToken token = default)
     {
-        CookieOptions cookieOptions = new CookieOptions
-        {
-            HttpOnly = true,
-            Expires = newRefreshToken.Expires
-        };
+        _cache.Set<RefreshTokenDTO>("refreshToken", newRefreshToken, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5)));
         
-        _contextAccessor.HttpContext.Response.Cookies.Append("refreshToken", newRefreshToken.Token, cookieOptions);
-        _contextAccessor.HttpContext.Response.Cookies.Append("userId", userId.ToString(), cookieOptions);
-        
-        var rT = await _unitOfWork.RefreshTokens.GetByUserIdAsync(userId, token);
+        var rT = await _unitOfWork.RefreshTokens.GetByUserIdAsync(newRefreshToken.UserId, token);
         if (rT is null)
         {
             RefreshToken refreshToken = new RefreshToken
@@ -180,7 +178,7 @@ public class AuthService : IAuthService
                 CreatedAt = newRefreshToken.CreatedAt,
                 UpdatedAt = null,
                 Expires = newRefreshToken.Expires,
-                UserId = userId
+                UserId = newRefreshToken.UserId
             };
             await _unitOfWork.RefreshTokens.CreateAsync(refreshToken, token);
         }
@@ -237,11 +235,5 @@ public class AuthService : IAuthService
             var computeHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
             return computeHash.SequenceEqual(passwordHash);
         }
-    }
-    private class _RefreshToken
-    {
-        public string Token { get; set; } = string.Empty;
-        public DateTimeOffset CreatedAt => DateTimeOffset.Now.ToLocalTime();
-        public DateTimeOffset Expires { get; set; }
     }
 }

@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Quiz_PROJECT;
 using Quiz_PROJECT.Configurations;
 using Quiz_PROJECT.Errors;
@@ -32,6 +31,8 @@ builder.Services.AddIdentity<User, ApplicationRole>()
     .AddDefaultTokenProviders();
 
 builder.Services.AddAuthenticationS(builder.Configuration);
+
+builder.Services.AddMemoryCache();
 
 builder.Services.AddServices();
 builder.Services.AddRepositories();
