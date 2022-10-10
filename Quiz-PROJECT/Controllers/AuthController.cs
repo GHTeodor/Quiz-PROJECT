@@ -27,9 +27,9 @@ public class AuthController : ControllerBase
 
     [HttpGet("[action]")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async Task<IActionResult> GetAsync(CancellationToken token = default)
+    public async Task<IActionResult> GetAsync()
     {
-        return Ok(await _authService.GetInfoFromTokenAsync(token));
+        return Ok(await _authService.GetInfoFromTokenAsync());
     }
 
     [HttpPost("[action]")]
@@ -50,16 +50,11 @@ public class AuthController : ControllerBase
         return Ok(await _authService.RefreshTokenAsync(token));
     }
     
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpDelete("[action]")]
     public async Task<ActionResult> LogoutAsync(CancellationToken token = default)
     {
         await _authService.LogoutAsync(token);
         return Ok();
-    }
-    
-    [HttpPut("[action]/{id:long:min(1)}")]
-    public async Task<IActionResult> UpdateByIdAsync([FromBody] UpdateUserDTO user, long id, CancellationToken token = default)
-    {
-        return Accepted(await _authService.UpdateByIdAsync(user, id, token));
     }
 }

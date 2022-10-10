@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Cors;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Quiz_PROJECT.Models.DTOModels;
 using Quiz_PROJECT.Services;
 
 namespace Quiz_PROJECT.Controllers;
@@ -26,6 +29,13 @@ public class UserController : ControllerBase
     public async Task<IActionResult> GetByIdAsync(long id, CancellationToken token = default)
     {
         return Ok(await _userService.GetByIdAsync(id, token));
+    }
+    
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [HttpPut("{id:long:min(1)}")]
+    public async Task<IActionResult> UpdateByIdAsync([FromBody] UpdateUserDTO user, long id, CancellationToken token = default)
+    {
+        return Accepted(await _userService.UpdateByIdAsync(user, id, token));
     }
 
     [HttpDelete("{id:long:min(1)}")]

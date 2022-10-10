@@ -21,7 +21,7 @@ public static class Authentication
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
-                        configuration.GetSection("AppSettings:Token").Value)),
+                        configuration["AppSettings:AccessTokenSecretKey"])),
                     ValidateIssuer = false,
                     ValidateAudience = false
                 };
