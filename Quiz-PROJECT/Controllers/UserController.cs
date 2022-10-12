@@ -10,6 +10,7 @@ namespace Quiz_PROJECT.Controllers;
 [ApiController]
 [Route("[controller]")]
 [EnableCors]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
@@ -20,6 +21,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> GetAllAsync(CancellationToken token = default)
     {
         return Ok(await _userService.GetAllAsync(token));
@@ -31,7 +33,6 @@ public class UserController : ControllerBase
         return Ok(await _userService.GetByIdAsync(id, token));
     }
     
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPut("{id:long:min(1)}")]
     public async Task<IActionResult> UpdateByIdAsync([FromBody] UpdateUserDTO user, long id, CancellationToken token = default)
     {
