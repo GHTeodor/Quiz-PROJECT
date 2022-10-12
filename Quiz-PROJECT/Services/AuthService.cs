@@ -122,6 +122,6 @@ public class AuthService : IAuthService
         await _unitOfWork.SaveAsync(token);
         await _unitOfWork.DisposeAsync();
 
-        _cache.Dispose();
+        // _cache.Dispose();
     }
 }
