@@ -45,4 +45,12 @@ public class UserController : ControllerBase
         await _userService.DeleteByIdAsync(id, token);
         return Ok(id);
     }
+
+    [HttpGet(@"{email:regex(^[[\w\.]]+@([[\w-]]+\.)+[[\w-]]{{2,4}}$)}")]
+    [AllowAnonymous]
+    public async Task<IActionResult> ConfirmEmailAsync(string email,
+        [FromQuery(Name = "confirmUrl")] string confirmUrl)
+    {
+        return Ok(await _userService.ConfirmEmailAsync(email, confirmUrl));
+    }
 }
