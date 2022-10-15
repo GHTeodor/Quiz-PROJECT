@@ -9,4 +9,5 @@ public interface IUserService
     Task<User> GetByIdAsync(long id, CancellationToken token = default);
     Task<User> UpdateByIdAsync(UpdateUserDTO user, long id, CancellationToken token = default);
     Task DeleteByIdAsync(long id, CancellationToken token = default);
+    Task<string> ConfirmEmailAsync(string email, string confirmUrl);
 }

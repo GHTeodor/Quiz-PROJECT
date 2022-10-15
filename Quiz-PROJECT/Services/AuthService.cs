@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using System.Security.Cryptography;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -19,12 +20,13 @@ public class AuthService : IAuthService
     private readonly IHttpContextAccessor _contextAccessor;
     private readonly UserManager<User> _userManager;
     private readonly IMemoryCache _cache;
+    private readonly IConfiguration _config;
     private readonly IPasswordHash _passwordHash;
     private readonly ITokenHelper _tokenHelper;
 
     public AuthService(DBContext dbContext, IMapper mapper,
         IHttpContextAccessor contextAccessor, UserManager<User> userManager, IMemoryCache memoryCache,
-        IPasswordHash passwordHash, ITokenHelper tokenHelper)
+        IPasswordHash passwordHash, ITokenHelper tokenHelper, IConfiguration configuration)
     {
         _mapper = mapper;
         _contextAccessor = contextAccessor;
@@ -32,6 +34,7 @@ public class AuthService : IAuthService
         _cache = memoryCache;
         _passwordHash = passwordHash;
         _tokenHelper = tokenHelper;
+        _config = configuration;
         _unitOfWork = new UnitOfWork.UnitOfWork(dbContext);
     }
 
@@ -73,10 +76,15 @@ public class AuthService : IAuthService
         await _unitOfWork.SaveAsync(token);
         await _unitOfWork.DisposeAsync();
 
+        _cache.Set(_config["AppSettings:MemoryCache:ConfirmEmailKey"],
+            Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
+            new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5)));
+
         return user;
     }
 
-    public async Task<Login_Refresh_JWTResponseDTO> LoginAsync(AuthLoginUserDTO request, CancellationToken token = default)
+    public async Task<Login_Refresh_JWTResponseDTO> LoginAsync(AuthLoginUserDTO request,
+        CancellationToken token = default)
     {
         User user = await _unitOfWork.Users.FindByEmailAsync(request.Email, token);
 
@@ -95,8 +103,7 @@ public class AuthService : IAuthService
 
     public async Task<Login_Refresh_JWTResponseDTO> RefreshTokenAsync(CancellationToken cancellationToken = default)
     {
-        RefreshTokenDTO refreshToken;
-        _cache.TryGetValue("refreshToken", out refreshToken);
+        _cache.TryGetValue(_config["AppSettings:MemoryCache:RefreshToken"], out RefreshTokenDTO refreshToken);
 
         User user = await _unitOfWork.Users.GetByIdAsync(refreshToken.UserId, cancellationToken);
 
@@ -115,8 +122,7 @@ public class AuthService : IAuthService
 
     public async Task LogoutAsync(CancellationToken token = default)
     {
-        RefreshTokenDTO refreshToken;
-        _cache.TryGetValue("refreshToken", out refreshToken);
+        _cache.TryGetValue(_config["AppSettings:MemoryCache:RefreshToken"], out RefreshTokenDTO refreshToken);
 
         await _unitOfWork.RefreshTokens.DeleteByUserIdAsync(refreshToken.UserId, token);
         await _unitOfWork.SaveAsync(token);

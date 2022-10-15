@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Caching.Memory;
 using Quiz_PROJECT.Errors;
 using Quiz_PROJECT.Models;
 using Quiz_PROJECT.Models.DTOModels;
@@ -12,11 +13,15 @@ public class UserService : IUserService
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IPasswordHash _passwordHash;
+    private readonly IMemoryCache _cache;
+    private readonly IConfiguration _config;
 
-    public UserService(DBContext dbContext, IMapper mapper, IPasswordHash passwordHash)
+    public UserService(DBContext dbContext, IMapper mapper, IPasswordHash passwordHash, IMemoryCache cache, IConfiguration configuration)
     {
         _mapper = mapper;
         _passwordHash = passwordHash;
+        _cache = cache;
+        _config = configuration;
         _unitOfWork = new UnitOfWork.UnitOfWork(dbContext);
     }
 
@@ -66,5 +71,30 @@ public class UserService : IUserService
         await _unitOfWork.Users.DeleteByIdAsync(id, token);
         await _unitOfWork.SaveAsync(token);
         await _unitOfWork.DisposeAsync();
+    }
+
+    public async Task<string> ConfirmEmailAsync(string email, string confirmUrl)
+    {
+        _cache.TryGetValue(_config["AppSettings:MemoryCache:ConfirmEmailKey"], out string confirmEmailString);
+
+        if (confirmEmailString == confirmUrl.Replace(" ", "+"))
+        {
+            User user = await _unitOfWork.Users.FindByEmailAsync(email) 
+                        ?? throw new NotFoundException("User not exist", $"There is no user with Eamil: {email}");
+            if (user.EmailConfirmed == false)
+            {
+                user.EmailConfirmed = true;
+
+                await _unitOfWork.Users.UpdateAsync(user);
+                await _unitOfWork.SaveAsync();
+                await _unitOfWork.DisposeAsync();
+
+                return "Email confirmed successfully";
+            }
+
+            return "Email has already been confirmed";
+        }
+
+        throw new BadRequestException("Email was not confirmed",$"Wrong confirmUrl: ({confirmUrl})");
     }
 }

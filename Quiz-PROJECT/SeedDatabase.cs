@@ -31,8 +31,10 @@ public class SeedDatabase
                 LastName = "IdentityUser",
                 UserName = "Identity",
                 Email = "Identity@gmail.com",
-                Phone = "+38(012)34-56-789",
-                
+                EmailConfirmed = true,
+                Phone = "+38(098)76-54-321",
+                PhoneNumberConfirmed = true,
+
                 PasswordHash = passwordHash,
                 ConfirmPasswordHash = confirmPasswordHash,
                 PasswordSalt = passwordSalt,

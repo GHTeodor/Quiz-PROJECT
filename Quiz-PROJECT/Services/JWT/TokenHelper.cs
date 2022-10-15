@@ -29,17 +29,17 @@ public class TokenHelper : ITokenHelper
         {
             new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
         };
-        
+
         var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
             _configuration["AppSettings:RefreshTokenSecretKey"]));
-        
+
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-        
+
         var token = new JwtSecurityToken(
             claims: claims,
             expires: DateTime.UtcNow.AddDays(7),
             signingCredentials: creds);
-        
+
         var refreshToken = new RefreshTokenDTO
         {
             Token = new JwtSecurityTokenHandler().WriteToken(token),
@@ -47,13 +47,13 @@ public class TokenHelper : ITokenHelper
             CreatedAt = DateTimeOffset.UtcNow,
             UserId = userId
         };
-        
+
         return refreshToken;
     }
 
     public async Task SetRefreshToken(RefreshTokenDTO newRefreshToken, CancellationToken token = default)
     {
-        _cache.Set("refreshToken", newRefreshToken,
+        _cache.Set(_configuration["AppSettings:MemoryCache:RefreshToken"], newRefreshToken,
             new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(35)));
 
         var rT = await _unitOfWork.RefreshTokens.GetByUserIdAsync(newRefreshToken.UserId, token);

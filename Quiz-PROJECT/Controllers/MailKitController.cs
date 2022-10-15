@@ -22,4 +22,10 @@ public class MailKitController: ControllerBase
     {
         return Ok(await _mailKitService.SendMail(mail, token));
     }
+    
+    [HttpGet(@"{email:regex(^[[\w\.]]+@([[\w-]]+\.)+[[\w-]]{{2,4}}$)}")]
+    public async Task<IActionResult> ConfirmEmail(string email, CancellationToken token = default)
+    {
+        return Ok(await _mailKitService.SendToConfirmEmail(email, token));
+    }
 }
