@@ -17,7 +17,7 @@ public class UnitOfWork : IUnitOfWork
     }
 
     public IUserRepository Users { get; }
-    public IRepository<Question> Questions { get; }
+    public IQuestionRepository Questions { get; }
     public IRefreshTokenRepository RefreshTokens { get; }
 
     public async Task SaveAsync(CancellationToken token = default)
