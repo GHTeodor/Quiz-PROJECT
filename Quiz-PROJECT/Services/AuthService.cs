@@ -49,11 +49,11 @@ public class AuthService : IAuthService
 
         if (_contextAccessor.HttpContext is not null)
         {
-            result.Add("Id", _contextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            result.Add("UserName", _contextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Name));
-            result.Add("Email", _contextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Email));
-            result.Add("MobilePhone", _contextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.MobilePhone));
-            result.Add("Role", _contextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Role));
+            result.Add("id", _contextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            result.Add("userName", _contextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Name));
+            result.Add("email", _contextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Email));
+            result.Add("mobilePhone", _contextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.MobilePhone));
+            result.Add("role", _contextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Role));
         }
 
         return await Task.FromResult(result);
