@@ -4,7 +4,7 @@ using Quiz_PROJECT.Models;
 
 namespace Quiz_PROJECT.Repositories;
 
-public class QuestionRepository : IRepository<Question>
+public class QuestionRepository : IQuestionRepository
 {
     private readonly DBContext _dbContext;
 
@@ -72,4 +72,26 @@ public class QuestionRepository : IRepository<Question>
     {
         _dbContext.Questions.Remove(await GetByIdAsync(id, token));
     }
+    
+ // ========================================> Charts <========================================
+ 
+    public async Task<List<string>> GetChartInfoByCategory(CancellationToken token = default)
+    {
+        return await _dbContext.Questions.GroupBy(g => g.Category).Select(g => g.Key)
+                .Select(g => g + ":" + _dbContext.Questions.Count(c => c.Category == g)).ToListAsync(token);
+    }
+    
+    public async Task<List<string>> GetChartInfoByDifficulty(CancellationToken token = default)
+    {
+        return await _dbContext.Questions.GroupBy(g => g.Difficulty).Select(g => g.Key)
+                .Select(g => g + ":" + _dbContext.Questions.Count(c => c.Difficulty == g)).ToListAsync(token);
+    }
+    
+    public async Task<List<string>> GetChartInfoByType(CancellationToken token = default)
+    {
+        return await _dbContext.Questions.GroupBy(g => g.Type).Select(g => g.Key)
+                .Select(g => g + ":" + _dbContext.Questions.Count(c => c.Type == g)).ToListAsync(token);
+    }
+    
+    
 }
