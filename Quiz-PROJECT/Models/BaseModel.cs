@@ -2,7 +2,7 @@
 
 namespace Quiz_PROJECT.Models;
 
-public class BaseModel
+public abstract class BaseModel
 {
     [Key]
     public long Id { get; set; }

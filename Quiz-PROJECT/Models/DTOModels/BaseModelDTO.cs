@@ -2,7 +2,7 @@
 
 namespace Quiz_PROJECT.Models.DTOModels;
 
-public class BaseModelDTO
+public abstract class BaseModelDTO
 {
     [Key]
     public long Id { get; set; }
